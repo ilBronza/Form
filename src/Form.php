@@ -51,6 +51,8 @@ class Form
 	public $mustShowLabel;
 	public $mustShowPlaceholder;
 
+	public $displayAsSwitcher = false;
+
 	public function __construct()
 	{
 		$this->fields = collect();
@@ -97,6 +99,8 @@ class Form
 		$this->fields->push($formField);
 
 		$formField->setForm($this);
+
+		return $this;
 	}
 
 	public function addFormFieldToFieldset(FormField $formField, string $fieldset)
@@ -189,6 +193,17 @@ class Form
 			$field->$name = $value;
 
 		return $field;
+	}
+
+
+	public function displayAsSwitcher(bool $status = true)
+	{
+		$this->displayAsSwitcher = $status;
+	}
+
+	public function mustDisplayAsSwitcher()
+	{
+		return $this->displayAsSwitcher;
 	}
 
 	public function render()

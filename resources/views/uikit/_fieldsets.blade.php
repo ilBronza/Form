@@ -1,3 +1,21 @@
+
+
+@if($form->mustDisplayAsSwitcher())
+
+<ul class="uk-subnav uk-subnav-pill" uk-switcher>
+	@foreach($form->fieldsets as $name => $fieldset)
+    <li><a href="#">{{ $name }}</a></li>
+	@endforeach
+</ul>
+
+<ul class="uk-switcher uk-margin">
+	@foreach($form->fieldsets as $name => $fieldset)
+    <li>@include('form::uikit._fields', ['fields' => $fieldset->fields])</li>
+	@endforeach
+</ul>
+
+@else
+
 @foreach($form->fieldsets as $name => $fieldset)
 
 <fieldset class="uk-fieldset">
@@ -11,3 +29,5 @@
 </fieldset>	
 
 @endforeach
+
+@endif
