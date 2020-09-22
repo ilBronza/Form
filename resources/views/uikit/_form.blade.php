@@ -8,6 +8,11 @@
     <div class="uk-width-expand">
 @endif
 
+@foreach($extraViews['outherTop'] ?? [] as $name => $parameters)
+    @include($name, $parameters)
+@endforeach
+
+
 @include('form::uikit._opening')
 
 @if((isset($extraViews['innerLeft']))||(isset($extraViews['innerRight'])))
@@ -30,7 +35,15 @@
             @endif
         </div>
         <div class="uk-card-body">
+            @foreach($extraViews['innerTop'] ?? [] as $name => $parameters)
+                @include($name, $parameters)
+            @endforeach
+
             @include('form::uikit._content')
+
+            @foreach($extraViews['innerBottom'] ?? [] as $name => $parameters)
+                @include($name, $parameters)
+            @endforeach
         </div>
         <div class="uk-card-footer">
             @include('form::uikit._closureButtons')

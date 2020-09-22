@@ -49,7 +49,7 @@ class Form
 	public $fields;
 
 	public $mustShowLabel;
-	public $mustShowPlaceholder;
+	public $mustShowPlaceholder = true;
 
 	public $displayAsSwitcher = false;
 	public $orientation = 'uk-form-horizontal';
@@ -196,6 +196,19 @@ class Form
 		return $field;
 	}
 
+	public function getFieldByName(string $name)
+	{
+		foreach($this->fields as $field)
+			if($field->name == $name)
+				return $field;
+
+		foreach($this->fieldsets as $fieldset)
+			foreach($fieldset->fields as $field)
+				if($field->name == $name)
+					return $field;
+
+		return false;
+	}
 
 	public function displayAsSwitcher(bool $status = true)
 	{
