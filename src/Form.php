@@ -52,6 +52,7 @@ class Form
 	public $mustShowPlaceholder;
 
 	public $displayAsSwitcher = false;
+	public $orientation = 'uk-form-horizontal';
 
 	public function __construct()
 	{
@@ -166,7 +167,7 @@ class Form
 
 	public function getFormOrientationClass()
 	{
-		return 'uk-form-horizontal';
+		return $this->orientation;
 	}
 
 	public function mustShowLabel(bool $mustShowLabel = null)
