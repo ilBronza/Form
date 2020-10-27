@@ -90,7 +90,23 @@ class Form
 		$this->card = $value;
 	}
 
+	/**
+	 * DEPRECATED for setModel
+	 * assign model to form to get field values
+	 *
+	 * @param Model $model
+	 **/
 	public function assignModel(Model $model)
+	{
+		$this->setModel($model);
+	}
+
+	/**
+	 * assign model to form to get field values
+	 *
+	 * @param Model $model
+	 **/
+	public function setModel(Model $model)
 	{
 		$this->model = $model;
 	}
@@ -223,5 +239,10 @@ class Form
 	public function render()
 	{
 		return view("form::uikit.form", ['form' => $this]);
+	}
+
+	public function _render()
+	{
+		return view("form::uikit._form", ['form' => $this]);
 	}
 }
