@@ -2,6 +2,7 @@
 
 namespace ilBronza\Form;
 
+use ilBronza\Form\Traits\FormButtonsTrait;
 use Illuminate\Database\Eloquent\Model;
 use \ilBronza\FormField\FormField;
 
@@ -36,6 +37,8 @@ class FormFieldset
 
 class Form
 {
+	use FormButtonsTrait;
+
 	public $method = 'POST';
 	public $action;
 	public $model;
@@ -44,6 +47,9 @@ class Form
 
 	public $card = false;
 	public $cardClasses = [];
+
+	public $submit = true;
+	public $extraSubmitButtons;
 
 	public $fieldsets = [];
 	public $fields;
@@ -57,6 +63,7 @@ class Form
 	public function __construct()
 	{
 		$this->fields = collect();
+		$this->extraSubmitButtons = collect();
 	}
 
 	public function setTitle(string $title)
@@ -169,6 +176,28 @@ class Form
 	public function getAction()
 	{
 		return $this->action;
+	}
+
+	public function hasCancel()
+	{
+		return $this->cancel ?? false;
+	}
+
+	public function useCancel()
+	{
+		$this->cancel = true;
+	}
+
+	public function setCancelUrl(string $cancelUrl)
+	{
+		$this->useCancel();
+
+		$this->cancelUrl = $cancelUrl;
+	}
+
+	public function getCancelUrl()
+	{
+		return $this->cancelUrl;
 	}
 
 	public function getBackToListUrl()
