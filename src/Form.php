@@ -2,7 +2,6 @@
 
 namespace ilBronza\Form;
 
-use ilBronza\Form\Traits\FormButtonsTrait;
 use Illuminate\Database\Eloquent\Model;
 use \ilBronza\FormField\FormField;
 
@@ -11,14 +10,32 @@ class FormFieldset
 	public $fields;
 	public $name;
 	public $form;
+
+	public $width = 1;
 	public $columns = 1;
 
-	public function __construct(string $name, Form $form)
+	public function __construct(string $name, Form $form, array $parameters = [])
 	{
 		$this->name = $name;
 		$this->form = $form;
 
 		$this->fields = collect();
+
+		$this->manageParameters($parameters);
+	}
+
+	public function setWidth($width)
+	{
+		$this->width = $width;
+	}
+
+	private function manageParameters(array $parameters)
+	{
+		if($width = ($parameters['width'] ?? false))
+			$this->setWidth($width);
+
+		if($columns = ($parameters['columns'] ?? false))
+			$this->setFieldsColumns($columns);
 	}
 
 	public function addFormField(FormField $formField)
@@ -33,12 +50,22 @@ class FormFieldset
 	{
 		$this->columns = $columns;
 	}
+
+	public function getHtmlClasses()
+	{
+		$result = [];
+
+		if(is_int($this->width))
+			$result[] = 'uk-width-1-' . $this->width;
+		else
+			$result[] = 'uk-width-' . $this->width;
+
+		return implode(" ", $result);
+	}
 }
 
 class Form
 {
-	use FormButtonsTrait;
-
 	public $method = 'POST';
 	public $action;
 	public $model;
@@ -48,11 +75,10 @@ class Form
 	public $card = false;
 	public $cardClasses = [];
 
-	public $submit = true;
-	public $extraSubmitButtons;
-
 	public $fieldsets = [];
 	public $fields;
+
+	public $htmlClasses = [];
 
 	public $mustShowLabel;
 	public $mustShowPlaceholder = true;
@@ -63,7 +89,6 @@ class Form
 	public function __construct()
 	{
 		$this->fields = collect();
-		$this->extraSubmitButtons = collect();
 	}
 
 	public function setTitle(string $title)
@@ -97,23 +122,7 @@ class Form
 		$this->card = $value;
 	}
 
-	/**
-	 * DEPRECATED for setModel
-	 * assign model to form to get field values
-	 *
-	 * @param Model $model
-	 **/
 	public function assignModel(Model $model)
-	{
-		$this->setModel($model);
-	}
-
-	/**
-	 * assign model to form to get field values
-	 *
-	 * @param Model $model
-	 **/
-	public function setModel(Model $model)
 	{
 		$this->model = $model;
 	}
@@ -137,9 +146,9 @@ class Form
 		$formField->setForm($this);
 	}
 
-	public function addFormFieldset(string $name)
+	public function addFormFieldset(string $name, array $parameters = [])
 	{
-		$fieldset = new FormFieldset($name, $this);
+		$fieldset = new FormFieldset($name, $this, $parameters);
 
 		$this->fieldsets[$name] = $fieldset;
 
@@ -176,28 +185,6 @@ class Form
 	public function getAction()
 	{
 		return $this->action;
-	}
-
-	public function hasCancel()
-	{
-		return $this->cancel ?? false;
-	}
-
-	public function useCancel()
-	{
-		$this->cancel = true;
-	}
-
-	public function setCancelUrl(string $cancelUrl)
-	{
-		$this->useCancel();
-
-		$this->cancelUrl = $cancelUrl;
-	}
-
-	public function getCancelUrl()
-	{
-		return $this->cancelUrl;
 	}
 
 	public function getBackToListUrl()
@@ -268,10 +255,5 @@ class Form
 	public function render()
 	{
 		return view("form::uikit.form", ['form' => $this]);
-	}
-
-	public function _render()
-	{
-		return view("form::uikit._form", ['form' => $this]);
 	}
 }

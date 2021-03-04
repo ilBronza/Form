@@ -16,18 +16,26 @@
 
 @else
 
-@foreach($form->fieldsets as $name => $fieldset)
+<div uk-grid>
+    
+    @foreach($form->fieldsets as $name => $fieldset)
 
-<fieldset class="uk-fieldset">
+    <div class="{{ $fieldset->getHtmlClasses() }}">
 
-    <legend class="uk-legend">{{ $name }}</legend>
+        <fieldset class="uk-fieldset uk-margin-bottom {{ Str::slug($name) }}" data-name="{{ Str::slug($name) }}" id="fieldset{{ Str::slug($name) }}">
 
-    <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}">
-    	@include('form::uikit._fields', ['fields' => $fieldset->fields])
+            <legend class="uk-legend">@lang('fieldsets.' . Str::camel($name))</legend>
+
+            <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}">
+            	@include('form::uikit._fields', ['fields' => $fieldset->fields])
+            </div>
+
+        </fieldset>	
+
     </div>
 
-</fieldset>	
+    @endforeach
 
-@endforeach
+</div>
 
 @endif
