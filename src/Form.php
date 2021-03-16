@@ -85,9 +85,6 @@ class Form
 
 		$this->fieldsets[$fieldset]->addFormField($formField);
 
-				if($formField->name == 'vertical_extra_strings')
-					dd($this->fieldsets[$fieldset]);
-
 		$formField->setForm($this);
 	}
 
