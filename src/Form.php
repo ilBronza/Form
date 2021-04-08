@@ -1,10 +1,10 @@
 <?php
 
-namespace ilBronza\Form;
+namespace IlBronza\Form;
 
 use Illuminate\Database\Eloquent\Model;
-use \ilBronza\FormField\FormField;
-use ilBronza\Form\FormFieldset;
+use \IlBronza\FormField\FormField;
+use IlBronza\Form\FormFieldset;
 
 class Form
 {

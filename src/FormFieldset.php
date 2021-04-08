@@ -1,9 +1,9 @@
 <?php
 
-namespace ilBronza\Form;
+namespace IlBronza\Form;
 
 use Illuminate\Database\Eloquent\Model;
-use \ilBronza\FormField\FormField;
+use \IlBronza\FormField\FormField;
 
 class FormFieldset
 {

@@ -18,21 +18,21 @@
     },
     "autoload": {
         "psr-4": {
-            "ilBronza\\Form\\": "src/"
+            "IlBronza\\Form\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ilBronza\\Form\\Tests\\": "tests"
+            "IlBronza\\Form\\Tests\\": "tests"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "ilBronza\\Form\\FormServiceProvider"
+                "IlBronza\\Form\\FormServiceProvider"
             ],
             "aliases": {
-                "Form": "ilBronza\\Form\\Facades\\Form"
+                "Form": "IlBronza\\Form\\Facades\\Form"
             }
         }
     }
