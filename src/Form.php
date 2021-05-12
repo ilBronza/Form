@@ -27,10 +27,23 @@ class Form
 
 	public $displayAsSwitcher = false;
 	public $orientation = 'uk-form-horizontal';
+	public $translateLegend = true;
+
+	public $collapse = true;
 
 	public function __construct()
 	{
 		$this->fields = collect();
+	}
+
+	public function setTranslateLegend(bool $value)
+	{
+		$this->translateLegend = $value;
+	}
+
+	public function translateLegend()
+	{
+		return $this->translateLegend;
 	}
 
 	public function setTitle(string $title)
@@ -144,6 +157,16 @@ class Form
 		return $this->orientation;
 	}
 
+	public function setVerticalForm()
+	{
+		$this->orientation = 'uk-form-stacked';
+	}
+
+	public function setStackedForm()
+	{
+		$this->orientation = 'uk-form-stacked';
+	}
+
 	public function mustShowLabel(bool $mustShowLabel = null)
 	{
 		if(is_null($mustShowLabel))
@@ -197,5 +220,10 @@ class Form
 	public function render()
 	{
 		return view("form::uikit.form", ['form' => $this]);
+	}
+
+	public function hasCollapse()
+	{
+		return $this->collapse;
 	}
 }

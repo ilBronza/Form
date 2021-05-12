@@ -4,7 +4,7 @@
 
 <ul class="uk-subnav uk-subnav-pill" uk-switcher>
 	@foreach($form->fieldsets as $name => $fieldset)
-    <li><a href="#">{{ $name }}</a></li>
+    <li><a href="#">{{ $fieldset->getLegend() }}</a></li>
 	@endforeach
 </ul>
 
@@ -16,17 +16,18 @@
 
 @else
 
-<div uk-grid>
+<div uk-grid class="uk-grid-divider">
     
     @foreach($form->fieldsets as $name => $fieldset)
 
     <div class="{{ $fieldset->getHtmlClasses() }}">
 
-        <fieldset class="uk-fieldset uk-margin-bottom {{ Str::slug($name) }}" data-name="{{ Str::slug($name) }}" id="fieldset{{ Str::slug($name) }}">
+        <fieldset class="uk-fieldset uk-margin-small-bottom {{ Str::slug($name) }}" data-name="{{ Str::slug($name) }}" id="fieldset{{ Str::slug($name) }}">
 
-            <legend class="uk-legend">@lang('fieldsets.' . Str::camel($name))</legend>
+            <legend class="uk-legend uk-margin-small-bottom">{!! $fieldset->getLegend() !!}
+            </legend>
 
-            <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}">
+            <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
             	@include('form::uikit._fields', ['fields' => $fieldset->fields])
             </div>
 
