@@ -29,7 +29,10 @@ class Form
 	public $orientation = 'uk-form-horizontal';
 	public $translateLegend = true;
 
+	public $submitButtonText;
+
 	public $collapse = true;
+	public $divider = true;
 
 	public function __construct()
 	{
@@ -101,11 +104,22 @@ class Form
 		$formField->setForm($this);
 	}
 
+	public function setDivider(bool $value)
+	{
+		return $this->divider = $value;
+	}
+
+	public function hasDivider()
+	{
+		return $this->divider;
+	}
+
 	public function addFormFieldset(string $name, array $parameters = [])
 	{
 		$fieldset = new FormFieldset($name, $this, $parameters);
 
 		$this->fieldsets[$name] = $fieldset;
+		$fieldset->setDivider($this->hasDivider());
 
 		return $fieldset;
 	}
@@ -135,6 +149,11 @@ class Form
 	public function getMethod()
 	{
 		return $this->method;
+	}
+
+	public function setAction(string $action)
+	{
+		$this->action = $action;
 	}
 
 	public function getAction()
@@ -225,5 +244,15 @@ class Form
 	public function hasCollapse()
 	{
 		return $this->collapse;
+	}
+
+	public function setSubmitButtonText(string $submitButtonText)
+	{
+		$this->submitButtonText = $submitButtonText;
+	}
+
+	public function getSubmitButtonText()
+	{
+		return $this->submitButtonText ?? __('forms.save');
 	}
 }

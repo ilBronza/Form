@@ -41,6 +41,11 @@ class FormFieldset
 		return $this->divider;
 	}
 
+	public function setDivider(bool $value = true)
+	{
+		$this->divider = $value;
+	}
+
 	public function setLegend(string $legend)
 	{
 		$this->legend;
