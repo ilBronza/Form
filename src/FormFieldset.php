@@ -105,9 +105,9 @@ class FormFieldset
 		$result = [];
 
 		if(is_int($this->width))
-			$result[] = 'uk-width-1-' . $this->width;
+			$result[] = 'uk-width-1-' . $this->width . '@m';
 		else
-			$result[] = 'uk-width-' . $this->width;
+			$result[] = 'uk-width-' . $this->width . '@m';
 
 		return implode(" ", $result);
 	}
