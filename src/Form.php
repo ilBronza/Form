@@ -13,6 +13,7 @@ class Form
 	public $model;
 
 	public $title;
+	public $intro;
 
 	public $card = false;
 	public $cardClasses = [];
@@ -57,6 +58,16 @@ class Form
 	public function getTitle()
 	{
 		return $this->title;
+	}
+
+	public function setIntro(string $intro)
+	{
+		$this->intro = $intro;
+	}
+
+	public function getIntro()
+	{
+		return $this->intro;
 	}
 
 	public function addCardClasses(array $classes = [])

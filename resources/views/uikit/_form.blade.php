@@ -33,6 +33,10 @@
             @if($backUrl = $form->getBackToListUrl())
             <span class="uk-h5"><a href="{{ $backUrl }}">@lang('crud.backToList')</a> </span>
             @endif
+
+            @if($formIntro = $form->getIntro())
+            {!! $formIntro !!}
+            @endif
         </div>
         <div class="uk-card-body">
             @foreach($extraViews['innerTop'] ?? [] as $name => $parameters)
