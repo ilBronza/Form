@@ -28,7 +28,7 @@
             </legend>
 
             @if($description = $fieldset->getDescription())
-            <div>
+            <div class="uk-margin-bottom">
                 {!! $description !!}
             </div>
             @endif
