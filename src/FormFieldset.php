@@ -18,6 +18,9 @@ class FormFieldset
 	public $collapse = true;
 	public $divider = false;
 
+	public $description;
+	public $descriptionText;
+
 	public $translateLegend = null;
 
 	public function __construct(string $name, Form $form, array $parameters = [])
@@ -110,5 +113,16 @@ class FormFieldset
 			$result[] = 'uk-width-' . $this->width . '@m';
 
 		return implode(" ", $result);
+	}
+
+	public function getDescription() : ? string
+	{
+		if(! $this->description)
+			return null;
+
+		if($this->descriptionText)
+			return $this->descriptionText;
+
+		return __('fieldsets.' . $this->legend . 'Description');
 	}
 }

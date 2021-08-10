@@ -27,6 +27,12 @@
             <legend class="uk-legend uk-margin-small-bottom">{!! $fieldset->getLegend() !!}
             </legend>
 
+            @if($description = $fieldset->getDescription())
+            <div>
+                {!! $description !!}
+            </div>
+            @endif
+
             <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}@m @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
             	@include('form::uikit._fields', ['fields' => $fieldset->fields])
             </div>
