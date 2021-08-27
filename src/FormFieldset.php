@@ -15,6 +15,12 @@ class FormFieldset
 	public $width = 1;
 	public $columns = 1;
 
+	public $containerHtmlClasses = [];
+	public $htmlClasses = [
+		'uk-margin-small-bottom',
+		'uk-fieldset'
+	];
+
 	public $collapse = true;
 	public $divider = false;
 
@@ -78,10 +84,43 @@ class FormFieldset
 		$this->width = $width;
 	}
 
+	public function addHtmlClasses(array $classes)
+	{
+		foreach($classes as $class)
+			$this->addClass($class);
+	}
+
+	public function addClass(string $class)
+	{
+		$this->htmlClasses[] = $class;		
+	}
+
+	public function addContainerHtmlClasses(array $classes)
+	{
+		foreach($classes as $class)
+			$this->addContainerClass($class);
+	}
+
+	public function addContainerClass(string $class)
+	{
+		$this->containerHtmlClasses[] = $class;
+	}
+
+	public function getHtmlClassesString()
+	{
+		return implode(" ", $this->getHtmlClasses());
+	}
+
 	private function manageParameters(array $parameters)
 	{
 		if($width = ($parameters['width'] ?? false))
 			$this->setWidth($width);
+
+		if($classes = ($parameters['classes'] ?? false))
+			$this->addHtmlClasses($classes);
+
+		if($containerClasses = ($parameters['containerClasses'] ?? false))
+			$this->addContainerHtmlClasses($containerClasses);
 
 		if($columns = ($parameters['columns'] ?? false))
 			$this->setFieldsColumns($columns);
@@ -105,14 +144,22 @@ class FormFieldset
 
 	public function getHtmlClasses()
 	{
-		$result = [];
+		return $this->htmlClasses;
+	}
 
+	public function getContainerHtmlClassesString() : string
+	{
+		return implode(" ", $this->getContainerHtmlClasses());
+	}
+
+	public function getContainerHtmlClasses() : array
+	{
 		if(is_int($this->width))
-			$result[] = 'uk-width-1-' . $this->width . '@m';
+			$this->containerHtmlClasses[] = 'uk-width-1-' . $this->width . '@m';
 		else
-			$result[] = 'uk-width-' . $this->width . '@m';
+			$this->containerHtmlClasses[] = 'uk-width-' . $this->width . '@m';
 
-		return implode(" ", $result);
+		return $this->containerHtmlClasses;
 	}
 
 	public function getDescription() : ? string

@@ -61,6 +61,10 @@ class FormServiceProvider extends ServiceProvider
             __DIR__.'/../config/form.php' => config_path('form.php'),
         ], 'form.config');
 
+        $this->publishes([
+            __DIR__.'/../resources/assets' => base_path('resources'),
+        ], 'form.assets');
+
         // Publishing the views.
         /*$this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/ilbronza'),

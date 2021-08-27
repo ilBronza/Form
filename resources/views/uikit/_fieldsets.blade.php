@@ -19,28 +19,7 @@
 <div uk-grid class="uk-grid-divider">
     
     @foreach($form->fieldsets as $name => $fieldset)
-
-    <div class="{{ $fieldset->getHtmlClasses() }}">
-
-        <fieldset class="uk-fieldset uk-margin-small-bottom {{ Str::slug($name) }}" data-name="{{ Str::slug($name) }}" id="fieldset{{ Str::slug($name) }}">
-
-            <legend class="uk-legend uk-margin-small-bottom">{!! $fieldset->getLegend() !!}
-            </legend>
-
-            @if($description = $fieldset->getDescription())
-            <div class="uk-margin-bottom">
-                {!! $description !!}
-            </div>
-            @endif
-
-            <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}@m @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
-            	@include('form::uikit._fields', ['fields' => $fieldset->fields])
-            </div>
-
-        </fieldset>	
-
-    </div>
-
+        @include('form::uikit._fieldset')
     @endforeach
 
 </div>

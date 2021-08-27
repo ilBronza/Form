@@ -17,28 +17,57 @@ $ composer require ilbronza/form
 
 ## Usage
 
+``` bash
+    static $formFields = [
+        'common' => [
+            'nominativo' => [
+                'containerClasses' => [
+                ],
+                'classes' => [
+                    'uk-section-primary',
+                ],
+                'fields' => [
+                    '3__nome' => [
+                        'type' => 'text',
+                        'rules' => 'string|nullable|max:255'
+                    ],
+                    '3__cognome' => ['text' => 'string|nullable|max:255'],
+                ],
+            ],
+            'recapiti' => [
+                'classes' => [
+                    'uk-background-primary',
+                    'uk-text-danger'
+                ],
+                'fields' => [
+                    '3__tel_fisso' => ['text' => 'string|nullable|max:255'],
+                    '3__tel_mobile' => ['text' => 'string|nullable|max:255'],
+                    '3__email' => ['text' => 'string|nullable|max:255'],
+                ],
+            ],
+            'precisazioni' => [
+                'fields' => [
+                    '3__precisazioni' => ['textarea' => 'string|nullable|max:2048'],
+                    '3__qualita_di' => [
+                        'type' => 'radio',
+                        'rules' => 'string|nullable',
+                        'stacked' => true
+                    ]
+                ],
+                'width' => 1,
+            ],
+        ]
+    ];    
+
+
+```
+
+
 ## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
 
-## Testing
 
-``` bash
-$ composer test
-```
-
-## Contributing
-
-Please see [contributing.md](contributing.md) for details and a todolist.
-
-## Security
-
-If you discover any security related issues, please email author email instead of using the issue tracker.
-
-## Credits
-
-- [author name][link-author]
-- [All Contributors][link-contributors]
 
 ## License
 
