@@ -3,6 +3,7 @@
 namespace IlBronza\Form;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use \IlBronza\FormField\FormField;
 
 class FormFieldset
@@ -16,6 +17,8 @@ class FormFieldset
 	public $columns = 1;
 
 	public $containerHtmlClasses = [];
+	public $fieldsets = [];
+
 	public $htmlClasses = [
 		'uk-margin-small-bottom',
 		'uk-fieldset'
@@ -23,6 +26,7 @@ class FormFieldset
 
 	public $collapse = true;
 	public $divider = false;
+	public $uniqueId;
 
 	public $description;
 	public $descriptionText;
@@ -35,9 +39,24 @@ class FormFieldset
 		$this->legend = $name;
 		$this->form = $form;
 
+		$this->setUniqueId();
+
 		$this->fields = collect();
 
 		$this->manageParameters($parameters);
+	}
+
+	public function setUniqueId(string $uniqueId = null) : string
+	{
+		if($uniqueId)
+			return $this->uniqueId = $uniqueId;
+
+		return $this->uniqueId = Str::slug($this->name) . "_" . rand(0, 99999);
+	}
+
+	public function getUniqueId()
+	{
+		return $this->uniqueId;
 	}
 
 	public function hasCollapse()
@@ -172,4 +191,25 @@ class FormFieldset
 
 		return __('fieldsets.' . $this->legend . 'Description');
 	}
+
+	public function addFormFieldToFieldset(FormField $formField, string $fieldset)
+	{
+		if(! $this->fieldsets[$fieldset])
+			$this->addFormFieldset($fieldset);
+
+		$this->fieldsets[$fieldset]->addFormField($formField);
+
+		$formField->setForm($this->form);
+	}
+
+	public function addFormFieldset(string $name, array $parameters = [])
+	{
+		$fieldset = new static($name, $this->form, $parameters);
+
+		$this->fieldsets[$name] = $fieldset;
+		$fieldset->setDivider($this->hasDivider());
+
+		return $fieldset;
+	}
+
 }

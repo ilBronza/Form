@@ -2,24 +2,36 @@
 
     <div>
             
-        <fieldset class="{{ Str::slug($name) }} {{ $fieldset->getHtmlClassesString() }}" data-name="{{ Str::slug($name) }}" id="fieldset{{ Str::slug($name) }}">
+        <fieldset class="{{ $fieldset->getUniqueId() }} {{ $fieldset->getHtmlClassesString() }}" data-name="{{ $fieldset->getUniqueId() }}" id="fieldset{{ $fieldset->getUniqueId() }}">
 
             <legend class="uk-legend uk-margin-medium-bottom">
-                <u>
-                    {!! $fieldset->getLegend() !!}
-                </u>
+                <span>{!! $fieldset->getLegend() !!}</span>
+                <span class="toggle{{ $fieldset->getUniqueId() }}" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-up"></span>
+                <span class="toggle{{ $fieldset->getUniqueId() }} uk-hidden" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-down"></span>
             </legend>
 
-            @if($description = $fieldset->getDescription())
-            <div class="uk-margin-bottom">
-                {!! $description !!}
-            </div>
-            @endif
+            <div class="toggle toggle{{ $fieldset->getUniqueId() }}">
+                
+                @if($description = $fieldset->getDescription())
+                <div class="uk-margin-bottom">
+                    {!! $description !!}
+                </div>
+                @endif
 
-            <div>
-                <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}@m @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
-                    @include('form::uikit._fields', ['fields' => $fieldset->fields])
-                </div>            
+                <div>
+                    <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}@m @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
+                        @include('form::uikit._fields', ['fields' => $fieldset->fields])
+                    </div>            
+                </div>
+
+                @if(count($fieldset->fieldsets))
+                <div class="uk-padding-small">
+                    @foreach($fieldset->fieldsets as $fieldset)
+                        @include('form::uikit._fieldset')
+                    @endforeach
+                </div>
+                @endif
+
             </div>
 
         </fieldset>	
