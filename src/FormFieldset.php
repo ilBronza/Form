@@ -20,7 +20,7 @@ class FormFieldset
 	public $fieldsets = [];
 
 	public $htmlClasses = [
-		'uk-margin-small-bottom',
+		'uk-margin-bottom',
 		'uk-fieldset'
 	];
 
@@ -39,11 +39,10 @@ class FormFieldset
 		$this->legend = $name;
 		$this->form = $form;
 
-		$this->setUniqueId();
-
 		$this->fields = collect();
 
 		$this->manageParameters($parameters);
+		$this->setUniqueId($parameters['id'] ?? null);
 	}
 
 	public function setUniqueId(string $uniqueId = null) : string
