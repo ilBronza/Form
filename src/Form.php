@@ -35,6 +35,8 @@ class Form
 	public $collapse = true;
 	public $divider = true;
 
+	public $allDatabaseFields = [];
+
 	public function __construct()
 	{
 		$this->fields = collect();
@@ -265,5 +267,15 @@ class Form
 	public function getSubmitButtonText()
 	{
 		return $this->submitButtonText ?? __('forms.save');
+	}
+
+	public function setAllDatabaseFields(array $allDatabaseFields)
+	{
+		$this->allDatabaseFields = $allDatabaseFields;
+	}
+
+	public function getDatabaseField(string $name)
+	{
+		return $this->allDatabaseFields[$name] ?? null;
 	}
 }

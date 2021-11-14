@@ -19,7 +19,7 @@
                 @endif
 
                 <div>
-                    <div uk-grid class="uk-child-width-1-{{ $fieldset->columns }}@m @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
+                    <div uk-grid class="{{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
                         @include('form::uikit._fields', ['fields' => $fieldset->fields])
                     </div>            
                 </div>

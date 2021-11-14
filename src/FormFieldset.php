@@ -155,7 +155,28 @@ class FormFieldset
 		return $this;
 	}
 
-	public function setFieldsColumns(int $columns)
+	public function getColumns()
+	{
+		return $this->columns;
+	}
+
+	public function getColumnsClass()
+	{
+		if(is_int($columns = $this->getColumns()))
+			return "uk-child-width-1-{$columns}@m";
+
+		if(! is_array($columns))
+			throw new \Exception('Valore di colonne non ammesso. Usare "columns" intero o array es. ["2@m", "4@l"]');
+
+		$pieces = [];
+
+		foreach($columns as $column)
+			$pieces[] = "uk-child-width-1-{$column}";
+
+		return implode(" ", $pieces);
+	}
+
+	public function setFieldsColumns($columns)
 	{
 		$this->columns = $columns;
 	}
@@ -206,7 +227,7 @@ class FormFieldset
 		$fieldset = new static($name, $this->form, $parameters);
 
 		$this->fieldsets[$name] = $fieldset;
-		$fieldset->setDivider($this->hasDivider());
+		$fieldset->setDivider($parameters['divider'] ?? $this->hasDivider());
 
 		return $fieldset;
 	}
