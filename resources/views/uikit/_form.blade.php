@@ -31,7 +31,7 @@
         <div class="uk-card-header">
             <span class="uk-h3 uk-display-block">{!! $form->getTitle() !!}</span>
             @if($backUrl = $form->getBackToListUrl())
-            <span class="uk-h5"><a href="{{ $backUrl }}">@lang('crud.backToList')</a> </span>
+            <span class="uk-h5"><a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a> </span>
             @endif
 
             @if($formIntro = $form->getIntro())

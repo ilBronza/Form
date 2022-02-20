@@ -2,18 +2,24 @@
 
 namespace IlBronza\Form;
 
+use IlBronza\Form\FormFieldset;
+use IlBronza\Form\Traits\FormButtonsTrait;
 use Illuminate\Database\Eloquent\Model;
 use \IlBronza\FormField\FormField;
-use IlBronza\Form\FormFieldset;
 
 class Form
 {
+	use FormButtonsTrait;
+
 	public $method = 'POST';
 	public $action;
 	public $model;
 
 	public $title;
 	public $intro;
+
+	public $cancelButton = true;
+	public $cancelHref;
 
 	public $card = false;
 	public $cardClasses = [];
@@ -37,9 +43,14 @@ class Form
 
 	public $allDatabaseFields = [];
 
+
+	public $closureButtons;
+
 	public function __construct()
 	{
 		$this->fields = collect();
+
+		$this->closureButtons = collect();
 	}
 
 	public function setTranslateLegend(bool $value)
@@ -174,6 +185,14 @@ class Form
 		return $this->action;
 	}
 
+	public function getCancelHref()
+	{
+		if($this->cancelHref)
+			return $this->cancelHref;
+
+		return url()->previous();
+	}
+
 	public function getBackToListUrl()
 	{
 		return $this->backToListUrl ?? false;
@@ -257,16 +276,6 @@ class Form
 	public function hasCollapse()
 	{
 		return $this->collapse;
-	}
-
-	public function setSubmitButtonText(string $submitButtonText)
-	{
-		$this->submitButtonText = $submitButtonText;
-	}
-
-	public function getSubmitButtonText()
-	{
-		return $this->submitButtonText ?? __('forms.save');
 	}
 
 	public function setAllDatabaseFields(array $allDatabaseFields)

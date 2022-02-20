@@ -33,6 +33,13 @@ class FormFieldset
 
 	public $translateLegend = null;
 
+	public function printDuduah()
+	{
+		$this->form = null;
+
+		return json_encode( $this);
+	}
+
 	public function __construct(string $name, Form $form, array $parameters = [])
 	{
 		$this->name = $name;
@@ -56,6 +63,43 @@ class FormFieldset
 	public function getUniqueId()
 	{
 		return $this->uniqueId;
+	}
+
+	public function hasView()
+	{
+		return isset($this->view);
+	}
+
+	public function getViewVariables() : array
+	{
+		if((! isset($this->form))&&(! isset($this->form->model)))
+			return [];
+
+		$model = $this->form->model;
+
+		$result = [];
+
+		foreach($this->view['variables'] ?? [] as $name => $method)
+			$result[$name] = $model->$method();
+
+		return $result;
+	}
+
+	public function getView()
+	{
+		if(! $this->hasView())
+			return false;
+
+		return $this->view['name'];
+	}
+
+	public function renderView()
+	{
+		$viewName = $this->getView();
+
+		$variables = $this->getViewVariables();
+
+		return view($viewName, $variables)->render();
 	}
 
 	public function hasCollapse()
@@ -183,7 +227,11 @@ class FormFieldset
 
 	public function getHtmlClasses()
 	{
-		return $this->htmlClasses;
+		return array_merge([
+			'fieldset' . $this->name
+			],
+			$this->htmlClasses
+		);
 	}
 
 	public function getContainerHtmlClassesString() : string
@@ -193,10 +241,23 @@ class FormFieldset
 
 	public function getContainerHtmlClasses() : array
 	{
-		if(is_int($this->width))
-			$this->containerHtmlClasses[] = 'uk-width-1-' . $this->width . '@m';
+		if(is_int($width = $this->width))
+			$this->containerHtmlClasses[] = 'uk-width-1-' . $width . '@m';
+
+		else if(! is_array($width))
+			throw new \Exception('Valore di width non ammesso. Usare "width" intero o array es. ["2@m", "4@l"]');
+
 		else
-			$this->containerHtmlClasses[] = 'uk-width-' . $this->width . '@m';
+		{
+			$pieces = [];
+
+			foreach($width as $_width)
+				$pieces[] = "uk-width-{$_width}";
+
+			$this->containerHtmlClasses[] = implode(" ", $pieces);	
+		}
+
+		$this->containerHtmlClasses[] = 'fieldset-container-' . $this->name;
 
 		return $this->containerHtmlClasses;
 	}

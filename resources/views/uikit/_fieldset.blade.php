@@ -1,12 +1,12 @@
 <div class="{{ $fieldset->getContainerHtmlClassesString() }}">
 
     <div>
-            
+
         <fieldset class="{{ $fieldset->getUniqueId() }} {{ $fieldset->getHtmlClassesString() }}" data-name="{{ $fieldset->getUniqueId() }}" id="fieldset{{ $fieldset->getUniqueId() }}">
 
             <legend class="uk-legend @if(! $description = $fieldset->getDescription()) uk-margin-medium-bottom @endif">
                 <span>{!! $fieldset->getLegend() !!}</span>
-                <span class="toggle{{ $fieldset->getUniqueId() }}" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-up"></span>
+                <span class="toggler toggle{{ $fieldset->getUniqueId() }}" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-up"></span>
                 <span class="toggle{{ $fieldset->getUniqueId() }} uk-hidden" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-down"></span>
             </legend>
 
@@ -17,6 +17,11 @@
                     {!! $description !!}
                 </div>
                 @endif
+
+                @if($fieldset->getView())
+                {!! $fieldset->renderView() !!}
+                @endif
+
 
                 <div>
                     <div uk-grid class="{{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">

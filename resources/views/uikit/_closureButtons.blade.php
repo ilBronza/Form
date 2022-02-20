@@ -4,3 +4,11 @@
 	name="save"
 	value="{{ $form->getSubmitButtonText() }}"
 	>
+
+@foreach($form->getClosureButtons() as $button)
+{!! $button->render() !!}
+@endforeach
+
+@if($cancel = $form->getCancelButton())
+	{!! $cancel->render() !!}
+@endif
