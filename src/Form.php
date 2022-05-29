@@ -5,6 +5,8 @@ namespace IlBronza\Form;
 use IlBronza\Form\FormFieldset;
 use IlBronza\Form\Traits\FormButtonsTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use \IlBronza\FormField\FormField;
 
 class Form
@@ -286,5 +288,23 @@ class Form
 	public function getDatabaseField(string $name)
 	{
 		return $this->allDatabaseFields[$name] ?? null;
+	}
+
+	public function getName()
+	{
+		if($this->name ?? false)
+			return $this->name;
+
+		return Route::currentRouteName();
+	}
+
+	public function getId()
+	{
+		if($this->id ?? false)
+			return $this->id;
+
+		$this->id = Str::slug($this->getName()) . rand(0, 99999);
+
+		return $this->id;
 	}
 }
