@@ -3,6 +3,8 @@
 namespace IlBronza\Form;
 
 use IlBronza\Form\FormFieldset;
+
+use IlBronza\Form\Traits\ExtraViewsTrait;
 use IlBronza\Form\Traits\FormButtonsTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +14,26 @@ use \IlBronza\FormField\FormField;
 class Form
 {
 	use FormButtonsTrait;
+
+	use ExtraViewsTrait;
+
+	public $extraViews;
+	static $availableExtraViewsPositions = [
+		'outherTop',
+		'outherBottom',
+		'innerTop',
+		'innerBttom',
+		'left',
+		'right',
+		'outherLeft',
+		'outherRight'
+	];
+
+	public function getValidExtraViewsPositions() : array
+	{
+		return static::$availableExtraViewsPositions;
+	}
+
 
 	public $method = 'POST';
 	public $action;
@@ -273,6 +295,11 @@ class Form
 	public function render()
 	{
 		return view("form::uikit.form", ['form' => $this]);
+	}
+
+	public function renderContent()
+	{
+		return view("form::uikit._content", ['form' => $this])->render();
 	}
 
 	public function hasCollapse()

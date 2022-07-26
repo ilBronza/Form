@@ -1,26 +1,25 @@
-@if((isset($extraViews['outerLeft']))||(isset($extraViews['outerRight'])))
+
+@if(isset($extraViews))
+    <span class="uk-display-block uk-text-danger uk-h3">USE NEW EXTRA VIEWS SYSTEM</span>
+    <span class="uk-display-block uk-text-danger uk-h3">Se alcune informazioni non sono visibili, contattare assistenza. <pre>{{ json_encode($extraViews) }}</pre></span>
+@endif
+
+@if($form->hasExtraViewsPositions('outherLeft', 'outherRight'))
 <div uk-grid>
 
-    @foreach($extraViews['outerLeft'] ?? [] as $name => $parameters)
-        @include($name, $parameters)
-    @endforeach
+    {!! $form->renderExtraViews('outherLeft') !!}
 
     <div class="uk-width-expand">
 @endif
 
-@foreach($extraViews['outherTop'] ?? [] as $name => $parameters)
-    @include($name, $parameters)
-@endforeach
-
+    {!! $form->renderExtraViews('outherTop') !!}
 
 @include('form::uikit._opening')
 
-@if((isset($extraViews['innerLeft']))||(isset($extraViews['innerRight'])))
+@if($form->hasExtraViewsPositions('right', 'left'))
 <div uk-grid>
 
-    @foreach($extraViews['innerLeft'] ?? [] as $name => $parameters)
-        @include($name, $parameters)
-    @endforeach
+    {!! $form->renderExtraViews('left') !!}
 
     <div class="uk-width-expand">
 @endif
@@ -39,15 +38,13 @@
             @endif
         </div>
         <div class="uk-card-body">
-            @foreach($extraViews['innerTop'] ?? [] as $name => $parameters)
-                @include($name, $parameters)
-            @endforeach
+
+            {!! $form->renderExtraViews('innerTop') !!}
 
             @include('form::uikit._content')
 
-            @foreach($extraViews['innerBottom'] ?? [] as $name => $parameters)
-                @include($name, $parameters)
-            @endforeach
+            {!! $form->renderExtraViews('innerBottom') !!}
+
         </div>
         <div class="uk-card-footer">
             @include('form::uikit._closureButtons')
@@ -55,37 +52,35 @@
     </div>
 
 	@else
-		@include('form::uikit._content')
+
+        {!! $form->renderExtraViews('innerTop') !!}
+        @include('form::uikit._content')
+        {!! $form->renderExtraViews('innerBottom') !!}
+
 		@include('form::uikit._closureButtons')
 
 	@endif
 
-@if((isset($extraViews['innerLeft']))||(isset($extraViews['innerRight'])))
+@if($form->hasExtraViewsPositions('right', 'left'))
     </div>
 
-    @foreach($extraViews['innerRight'] ?? [] as $name => $parameters)
-        @include($name, $parameters)
-    @endforeach
+    {!! $form->renderExtraViews('right') !!}
 
 </div>
 @endif
 
 @include('form::uikit._closure')
 
-@if((isset($extraViews['outerLeft']))||(isset($extraViews['outerRight'])))
+@if($form->hasExtraViewsPositions('outherRight', 'outherLeft'))
+
     </div>
 
-    @foreach($extraViews['outerRight'] ?? [] as $name => $parameters)
-        @include($name, $parameters)
-    @endforeach
+    {!! $form->renderExtraViews('outherRight') !!}
 
 </div>
 @endif
 
-@foreach($extraViews['outerBottom'] ?? [] as $name => $parameters)
-    @include($name, $parameters)
-@endforeach
-
+{!! $form->renderExtraViews('outherBottom') !!}
 
 @if (isset($errors)&&($errors->any()))
     <div class="alert alert-danger">
