@@ -2,7 +2,7 @@
 
 namespace IlBronza\Form\Traits;
 
-use IlBronza\Button\Button;
+use IlBronza\Buttons\Button;
 
 trait FormButtonsTrait
 {
@@ -16,17 +16,20 @@ trait FormButtonsTrait
 		if(! $this->hasCancelButton())
 			return null;
 
-		$button = new Button();
+		$button = Button::create([
+			'text' => 'form::form.cancel',
+			'href' => $this->getCancelHref()
+		]);
 
 		$button->addClass('uk-button-default');
 
-		$button->setText(
-			trans('form::form.cancel')
-		);
+		// $button->setText(
+		// 	trans('form::form.cancel')
+		// );
 
-		$button->setHref(
-			$this->getCancelHref()
-		);
+		// $button->setHref(
+		// 	$this->getCancelHref()
+		// );
 
 		return $button;
 	}
@@ -53,14 +56,12 @@ trait FormButtonsTrait
 
 	public function addSaveAndNewButton()
 	{
-		$button = new Button();
+		$button = Button::create([
+			'name' => 'save_and_new',
+			'text' => 'form::form.saveAndNew'
+		]);
 
 		$button->setPrimary();
-		$button->setName('save_and_new');
-
-		$button->setText(
-			trans('form::form.saveAndNew')
-		);
 
 		$button->setSubmit();
 
@@ -69,14 +70,12 @@ trait FormButtonsTrait
 
 	public function addSaveAndRefreshButton()
 	{
-		$button = new Button();
+		$button = Button::create([
+			'name' => 'save_and_refresh',
+			'text' => 'form::form.saveAndRefresh'
+		]);
 
 		$button->setPrimary();
-		$button->setName('save_and_refresh');
-
-		$button->setText(
-			trans('form::form.saveAndRefresh')
-		);
 
 		$button->setSubmit();
 

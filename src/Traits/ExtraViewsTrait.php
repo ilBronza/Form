@@ -2,7 +2,7 @@
 
 namespace IlBronza\Form\Traits;
 
-use IlBronza\Button\Button;
+use IlBronza\Buttons\Button;
 use Illuminate\Support\Collection;
 
 trait ExtraViewsTrait
