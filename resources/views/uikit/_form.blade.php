@@ -34,6 +34,7 @@
             @endif
 
             @if($formIntro = $form->getIntro())
+            <br />
             {!! $formIntro !!}
             @endif
         </div>
