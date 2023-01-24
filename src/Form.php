@@ -22,7 +22,7 @@ class Form
 		'outherTop',
 		'outherBottom',
 		'innerTop',
-		'innerBttom',
+		'innerBottom',
 		'left',
 		'right',
 		'outherLeft',
@@ -295,6 +295,11 @@ class Form
 	public function render()
 	{
 		return view("form::uikit.form", ['form' => $this]);
+	}
+
+	public function _render()
+	{
+		return view("form::uikit._form", ['form' => $this]);
 	}
 
 	public function renderContent()

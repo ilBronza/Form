@@ -2,6 +2,6 @@
 
 @section('content')
 
-    @include('form::uikit._form')
+	{!! $form->_render() !!}
 
 @endsection
