@@ -9,6 +9,8 @@ use \IlBronza\FormField\FormField;
 class FormFieldset
 {
 	public $fields;
+	public $fieldsets;
+
 	public $name;
 	public $legend;
 	public $form;
@@ -17,7 +19,6 @@ class FormFieldset
 	public $columns = 1;
 
 	public $containerHtmlClasses = [];
-	public $fieldsets = [];
 
 	public $htmlClasses = [
 		'uk-margin-bottom',
@@ -40,7 +41,7 @@ class FormFieldset
 		return json_encode( $this);
 	}
 
-	public function __construct(string $name, Form $form, array $parameters = [])
+	public function __construct(string $name, Form $form = null, array $parameters = [])
 	{
 		$this->name = $name;
 		$this->legend = $name;
@@ -50,6 +51,8 @@ class FormFieldset
 
 		$this->manageParameters($parameters);
 		$this->setUniqueId($parameters['id'] ?? null);
+
+		$this->fieldsets = collect();
 	}
 
 	public function setUniqueId(string $uniqueId = null) : string
@@ -70,12 +73,31 @@ class FormFieldset
 		return isset($this->view);
 	}
 
+	public function setModel(Model $model)
+	{
+		$this->model = $model;
+	}
+
+	public function getModel() : ? Model
+	{
+		if($this->model ?? null)
+			return $this->model;
+
+		if($this->form?->model)
+			return $this->form->model;
+
+		return null;
+	}
+
 	public function getViewVariables() : array
 	{
-		if((! isset($this->form))&&(! isset($this->form->model)))
-			return [];
+		// if((! isset($this->form))&&(! isset($this->form->model)))
+		// 	return [];
 
-		$model = $this->form->model;
+		// $model = $this->form->model;
+
+		if(! ($model = $this->getModel()))
+			return [];
 
 		$result = [];
 
@@ -194,6 +216,8 @@ class FormFieldset
 	public function addFormField(FormField $formField)
 	{
 		$formField->form = $this->form;
+		$formField->setFieldset($this);
+
 		$this->fields->push($formField);
 
 		return $this;
@@ -283,6 +307,11 @@ class FormFieldset
 		$formField->setForm($this->form);
 	}
 
+	static function createByNameAndParameters(string $name, array $parameters)
+	{
+		return new static($name, null, $parameters);
+	}
+
 	public function addFormFieldset(string $name, array $parameters = [])
 	{
 		$fieldset = new static($name, $this->form, $parameters);
@@ -291,6 +320,11 @@ class FormFieldset
 		$fieldset->setDivider($parameters['divider'] ?? $this->hasDivider());
 
 		return $fieldset;
+	}
+
+	public function renderShow()
+	{
+		return view("form::uikit.fieldsets.show", ['fieldset' => $this]);
 	}
 
 }
