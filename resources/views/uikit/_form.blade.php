@@ -34,8 +34,9 @@
             @endif
 
             @if($formIntro = $form->getIntro())
-            <br />
-            {!! $formIntro !!}
+            <div class="uk-margin-top">
+                {!! $formIntro !!}
+            </div>
             @endif
         </div>
         <div class="uk-card-body">

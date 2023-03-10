@@ -2,6 +2,7 @@
 
 namespace IlBronza\Form;
 
+use IlBronza\Form\FormFieldset;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use \IlBronza\FormField\FormField;
@@ -10,6 +11,7 @@ class FormFieldset
 {
 	public $fields;
 	public $fieldsets;
+	public $parentFieldset;
 
 	public $name;
 	public $legend;
@@ -32,7 +34,20 @@ class FormFieldset
 	public $description;
 	public $descriptionText;
 
-	public $translateLegend = null;
+	public $translateLegend = true;
+	public ?string $translatedLegend = null;
+
+	public $visible = true;
+
+	public function setVisibility(bool $visible)
+	{
+		$this->visible = $visible;
+	}
+
+	public function getVisibility(bool $visible)
+	{
+		return $this->visible;
+	}
 
 	public function printDuduah()
 	{
@@ -63,6 +78,16 @@ class FormFieldset
 		return $this->uniqueId = Str::slug($this->name) . "_" . rand(0, 99999);
 	}
 
+	public function setForm(Form $form = null)
+	{
+		$this->form = $form;
+	}
+
+	public function getForm() : ? Form
+	{
+		return $this->form;
+	}
+
 	public function getUniqueId()
 	{
 		return $this->uniqueId;
@@ -83,8 +108,11 @@ class FormFieldset
 		if($this->model ?? null)
 			return $this->model;
 
-		if($this->form?->model)
-			return $this->form->model;
+		if($model = $this->getForm()?->getModel())
+			return $model;
+
+		if($model = $this->getParentFieldset()?->getModel())
+			return $model;
 
 		return null;
 	}
@@ -146,6 +174,9 @@ class FormFieldset
 
 	public function translateLegend()
 	{
+		if($this->translatedLegend)
+			return $this->translatedLegend;
+
 		if($this->translateLegend !== null)
 			return $this->translateLegend;
 
@@ -157,6 +188,9 @@ class FormFieldset
 
 	public function getLegend()
 	{
+		if($this->translatedLegend)
+			return $this->translatedLegend;
+
 		if($this->translateLegend())
 			return __('fieldsets.' . $this->legend);
 
@@ -310,6 +344,23 @@ class FormFieldset
 	static function createByNameAndParameters(string $name, array $parameters)
 	{
 		return new static($name, null, $parameters);
+	}
+
+	public function addFieldset(FormFieldset $formFieldset)
+	{
+		$this->fieldsets->push($formFieldset);
+
+		$formFieldset->setParentFieldset($this);
+	}
+
+	public function setParentFieldset(FormFieldset $formFieldset)
+	{
+		$this->parentFieldset = $formFieldset;
+	}
+
+	public function getParentFieldset() : ? Formfieldset
+	{
+		return $this->parentFieldset;
 	}
 
 	public function addFormFieldset(string $name, array $parameters = [])

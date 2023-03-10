@@ -2,69 +2,103 @@
 
 namespace IlBronza\Form\Helpers\FieldsetsProvider;
 
-use Auth;
 use IlBronza\FormField\Helpers\FormFieldsProvider\FormFieldsProvider;
+use IlBronza\Form\Form;
 use IlBronza\Form\FormFieldset;
+use IlBronza\Form\Helpers\FieldsetsProvider\FieldsetParametersFile;
+use IlBronza\Form\Helpers\FieldsetsProvider\Traits\FieldsetsProviderGettersSettersTrait;
+use IlBronza\Form\Helpers\FieldsetsProvider\Traits\FieldsetsProviderParsersTrait;
+use IlBronza\Form\Helpers\FieldsetsProvider\Traits\FieldsetsProviderRolesTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class FieldsetsProvider
 {
+	use FieldsetsProviderRolesTrait;
+	use FieldsetsProviderGettersSettersTrait;
+	use FieldsetsProviderParsersTrait;
+
+	public $form;
+	public $model;
 	public $parametersFile;
 
-	public function __construct(string $type)
+	static function setFieldsetsParametersByFile(
+		FieldsetParametersFile $file,
+		Model $model
+	) : static
 	{
-		$this->type = $type;
+		$fieldsetProvider = new static();
+
+		$fieldsetProvider->setModel($model);
+
+		$fieldsetProvider->setParametersByFile($file);
+
+		return $fieldsetProvider;
 	}
 
-	public function getType()
+	static function setFieldsetsParametersByArray(
+		array $parameters,
+		Model $model
+	) : static
 	{
-		return $this->type;
+		$fieldsetProvider = new static();
+
+		$fieldsetProvider->setModel($model);
+		$fieldsetProvider->setParameters($parameters);
+
+		return $fieldsetProvider;
 	}
 
-	public function setParameters(array $parameters)
+	static function getFieldsetsByParametersFile(FieldsetParametersFile $file, Model $model)
 	{
-		$this->parameters = $parameters;
+		$fieldsetProvider = new static(static::$type);
+
+		$fieldsetProvider->setModel($model);
+
+		$fieldsetProvider->setParametersByFile($file);
+
+		return $fieldsetProvider->getFieldsetsCollection();
 	}
 
-	public function setParametersByFile(FieldsetParametersFile $file)
+	static function getFieldsetsCollectionByParametersFile(
+		FieldsetParametersFile $file,
+		Model $model
+	)
 	{
-		$getterMethod = implode("", [
-			'get',
-			ucfirst($this->getType()),
-			'FieldsetsArray'
-		]);
+		$fieldsetProvider = new static();
 
-		$parameters = $file->$getterMethod();
+		$fieldsetProvider->setModel($model);
+		$fieldsetProvider->setParametersByFile($file);
 
-		$this->setParameters($parameters);
+		return $fieldsetProvider->setFieldsetsCollectionToModel();
 	}
 
-	public function setModel(Model $model)
+	static function addFieldsetsToFormByParametersFile(
+		Form $form,
+		FieldsetParametersFile $file,
+		Model $model
+	)
 	{
-		$this->model = $model;
+		$fieldsetProvider = new static();
+
+		$fieldsetProvider->setForm($form);
+		$fieldsetProvider->setModel($model);
+		$fieldsetProvider->setParametersByFile($file);
+
+		return $fieldsetProvider->setFieldsetsCollectionToForm();
 	}
 
-	public function getModel() : Model
+	protected function _getFieldsetFields(array $fieldsetParameters) : array
 	{
-		return $this->model;
-	}
+		if($fieldsetParameters['fields'] ?? false)
+			return $fieldsetParameters['fields'];
 
-	public function getParametersByFile(FieldsetParametersFile $file)
-	{
-		$this->setParametersByFile($file);
-
-		return $this->getFieldsetsCollection();
-	}
-
-	public function getFieldsetsArray()
-	{
-		return $this->parameters;
+		return $fieldsetParameters;
 	}
 
 	protected function getFieldsetFields(array $fieldsetParameters) : array
 	{
-		$fieldsParameters = $fieldsetParameters['fields'];
+		$fieldsParameters = $this->_getFieldsetFields($fieldsetParameters);
 
 		return $this->filterByRolesAndPermissions($fieldsParameters);
 	}
@@ -87,139 +121,239 @@ class FieldsetsProvider
 		return $fieldsetParameters;
 	}
 
-	public function addFieldset(Collection $fieldsetCollection, string $name, array $fieldsetParameters)
+	public function createFieldset(string $name, array $fieldsetParameters) : FormFieldset
 	{
-		if(! $this->userCanSeeFieldsetByRoles($fieldsetParameters))
-			return ;
-
-		$fields = $this->getFieldsetFields($fieldsetParameters);
-		$subFieldsets = $this->getSubFieldsets($fieldsetParameters);
 		$fieldsetOptions = $this->getFieldsetOptions($fieldsetParameters);
 
 		$fieldset = FormFieldset::createByNameAndParameters($name, $fieldsetOptions);
 
-		$fieldset->setModel(
-			$this->getModel()
+		$fieldset->setVisibility(
+			$this->userCanSeeFieldsetByRoles($fieldsetParameters)
 		);
 
-		$fieldsetCollection->push($fieldset);
+		$fields = $this->getFieldsetFields($fieldsetParameters);
 
 		foreach($fields as $fieldName => $field)
 			$fieldset->addFormField(
 				FormFieldsProvider::createByNameParameters($fieldName, $field)
 			);
 
+		$subFieldsets = $this->getSubFieldsets($fieldsetParameters);
+
 		foreach($subFieldsets as $name => $subFieldsetParameters)
-			$this->addFieldset($fieldset->fieldsets, $name, $subFieldsetParameters);
+			$fieldset->addFieldset(
+				$this->createFieldset(
+					$name, $subFieldsetParameters
+				)
+			);
+
+		return $fieldset;
+	}
+
+	public function _getFieldsetsCollection(array $parameters) : Collection
+	{
+		$result = collect();
+
+		foreach($parameters as $name => $fieldsetParameters)
+			$result->push(
+				$this->createFieldset(
+					$name, $fieldsetParameters
+				)
+			);
+
+		return $result;
 	}
 
 	public function getFieldsetsCollection() : Collection
 	{
-		$this->fieldsets = collect();
+		$fieldsetsArray = $this->getParametersArray();
 
-		$fieldsets = $this->getFieldsetsArray();
+		return $this->_getFieldsetsCollection($fieldsetsArray);
+	}
 
-		foreach($fieldsets as $name => $fieldsetParameters)
-			$this->addFieldset($this->fieldsets, $name, $fieldsetParameters);
+	public function setFieldsetsCollectionToModel()
+	{
+		$fieldsetsCollection = $this->getFieldsetsCollection();
 
-		return $this->fieldsets;
+		foreach($fieldsetsCollection as $fieldset)
+			$fieldset->setModel(
+				$this->getModel()
+			);
+
+		return $fieldsetsCollection;
+	}
+
+	public function setFieldsetsCollectionToForm()
+	{
+		$fieldsetsCollection = $this->getFieldsetsCollection();
+
+		$this->form->addFieldsets($fieldsetsCollection);
 	}
 
 
 	/**
-	 * START FIELD PARAMETERS
-	**/
-
-	private function getFieldParametersSingleRow(string $name, array $parametersString)
-	{
-		$type = array_key_first($parametersString);
-
-		$parameters = $this->buildNameAndLabelArray($name, $parametersString);
-		$parameters['type'] = $type;
-
-		$rules = explode("|", $parametersString[$type]);
-
-		return $this->buildParametersRules($parameters, $rules);
-	}
-
-	private function getFieldParameters(string $fieldName, array $parametersString)
-	{
-		if(count($parametersString) == 1)
-			return $this->getFieldParametersSingleRow($fieldName, $parametersString);
-
-		return $this->getFieldParametersKeyValueRow($fieldName, $parametersString);
-	}
+	 * check if field is required in given rules array
+	 *
+	 * @param array $rules
+	 * @return boolean
+	 */
+	// private function checkIfFieldIsRequired(array $rules)
+	// {
+	// 	return in_array('required', $rules);
+	// }
 
 	/**
-	 * END FIELD PARAMETERS
-	**/
+	 * build an array with a key per each rule
+	 *
+	 * @param array $parameters, array $rules
+	 * @return array
+	 */
+	// private function buildParametersRules($parameters, $rules)
+	// {
+	// 	if(! isset($parameters['required']))
+	// 		$parameters['required'] = $this->checkIfFieldIsRequired($rules);
+
+	// 	$parameters['rules'] = [];
+
+	// 	foreach($rules as $key => $rule)
+	// 		if(strpos($rule, ":"))
+	// 		{
+	// 			$_rule = explode(":", $rule);
+
+	// 			$parameters['rules'][$_rule[0]] = $_rule[1];
+
+	// 			if($_rule[0] == 'max')
+	// 				$parameters['max'] = $_rule[1];
+	// 		}
+	// 		else
+	// 			$parameters['rules'][$rule] = true;
+
+	// 	return $parameters;		
+	// }
+
+	// private function buildNameAndLabelArray(string $name, array $parameters)
+	// {
+	// 	return [
+	// 			'name' => $name,
+	// 			'label' => $parameters['label'] ?? __('fields.' . $name),
+	// 		];
+	// }
+
+	// protected function getFieldParametersSingleRow(string $name, array $parametersString)
+	// {
+	// 	$type = array_key_first($parametersString);
+
+	// 	$parameters = $this->buildNameAndLabelArray($name, $parametersString);
+	// 	$parameters['type'] = $type;
+
+	// 	$rules = explode("|", $parametersString[$type]);
+
+	// 	return $this->buildParametersRules($parameters, $rules);
+	// }
+
+	// public function getFieldParameters(string $fieldName, array $parametersString)
+	// {
+	// 	if(! isset($parametersString['type']))
+	// 		throw new \Exception('Missing "type" array element in field ' . $name);
+
+	// 	if(! isset($parametersString['rules']))
+	// 		throw new \Exception('Missing "rules" array element in field ' . $name);
+
+	// 	// if($parametersString['type'] == 'select')
+	// 	// 	if(! isset($parametersString['list']))
+	// 	// 		if(! isset($parametersString['relation']))
+	// 	// 			throw new \Exception('Missing "relation" or "list" array element in field ' . $name . ', necessary to retrieve select elements');
+
+	// 	// $parameters = array_merge(
+	// 	// 	$parametersString, 
+	// 	// 	$this->buildNameAndLabelArray($name, $parametersString)
+	// 	// );
+
+	// 	dd($parametersString);
+	// 	$rules = $parametersString['rules'];
+
+	// 	if(is_string($rules))
+	// 		$rules = explode("|", $parametersString['rules']);
+
+	// 	return $this->buildParametersRules($parameters, $rules);
 
 
+	// 	// if($this->isSingleRowField($parametersString))
+	// 	// 	return $this->getFieldParametersSingleRow($fieldName, $parametersString);
 
-	/**
-	 * START ROLES METHODS
-	**/
+	// 	// return $this->getFieldParametersKeyValueRow($fieldName, $parametersString);
+	// }
 
-	protected function userCanSeeFieldsetByRoles(array $fieldsetParameters) : bool
+	// protected function isSingleRowField(array $fieldContent) : bool
+	// {
+	// 	return count($fieldContent) == 1;
+	// }
+
+	public function parametersContainRelationship(array $fieldParameters) : bool
 	{
-		if(! ($fieldsetParameters['roles'] ?? false))
-			return true;
-
-		if(! Auth::user())
-			abort(403);
-
-		return Auth::user()->hasAnyRole($fieldsetParameters['roles']);		
+		return isset($fieldParameters['relation']);
 	}
 
-	protected function filterByRolesAndPermissions(array $fields) : array
+	public function parametersContainBelongsToRelationship(array $fieldParameters) : bool
 	{
-		$fields = $this->filterByRoles($fields);
-		$fields = $this->filterByPermissions($fields);
+		$relationMethod = $fieldParameters['relation'];
 
-		return $fields;
+		$relationType = class_basename(
+			get_class(
+				$this->getModel()->{$relationMethod}()
+			)
+		);
+
+		return $relationType == 'BelongsTo';
 	}
 
-	protected function filterByRoles(array $fields) : array
+	public function getBindableAttributeFieldsNames() : array
 	{
-		if(($user = Auth::user())&&($user->hasRole('superadmin')))
-			return $fields;
+		$result = [];
 
-		foreach($fields as $key => $field)
+		foreach($this->getBindableAttributeFields() as $index => $fieldParameters)
+			$result[$index] = $fieldParameters['name'];
+
+		return $result;
+	}
+
+	public function getBindableAttributeFields() : array
+	{
+		$fields = $this->getAllFieldsArray();
+
+		foreach($fields as $index => $fieldParameters)
 		{
-			if(! isset($field['roles']))
+			if(! $this->parametersContainRelationship($fieldParameters))
 				continue;
 
-			if(($user)&&($user->hasRole($field['roles'])))
-				continue;
+			if($this->parametersContainBelongsToRelationship($fieldParameters))
+			{
+				$relationMethod = $fieldParameters['relation'];
+				$fields[$index]['name'] = $this->getModel()->{$relationMethod}()->getForeignKeyName();
 
-			unset($fields[$key]);
+				continue;
+			}
+
+			unset($fields[$index]);
 		}
 
 		return $fields;
 	}
 
-	protected function filterByPermissions(array $fields) : array
+	public function getExtraTableRelationshipsFields() : array
 	{
-		if(($user = Auth::user())&&($user->hasRole('superadmin')))
-			return $fields;
+		$fields = $this->getAllFieldsArray();
 
-		foreach($fields as $key => $field)
+		foreach($fields as $index => $fieldParameters)
 		{
-			if(! isset($field['permissions']))
-				continue;
+			if(! $this->parametersContainRelationship($fieldParameters))
+				unset($fields[$index]);
 
-			if(($user)&&($user->hasAnyPermission($field['permissions'])))
-				continue;
-
-			unset($fields[$key]);
+			else if($this->parametersContainBelongsToRelationship($fieldParameters))
+				unset($fields[$index]);
 		}
 
 		return $fields;
 	}
-
-	/**
-	 * END ROLES METHODS
-	**/
-
 
 }

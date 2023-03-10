@@ -7,12 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ShowFieldsetsProvider extends FieldsetsProvider
 {
-	static function getFieldsetsByParametersFile(FieldsetParametersFile $file, Model $model)
-	{
-		$fieldsetProvider = new static('show');
+	public static $type = "show";
 
-		$fieldsetProvider->setModel($model);
-
-		return $fieldsetProvider->getParametersByFile($file);
-	}
 }

@@ -3,10 +3,10 @@
 namespace IlBronza\Form;
 
 use IlBronza\Form\FormFieldset;
-
 use IlBronza\Form\Traits\ExtraViewsTrait;
 use IlBronza\Form\Traits\FormButtonsTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use \IlBronza\FormField\FormField;
@@ -48,7 +48,7 @@ class Form
 	public $card = false;
 	public $cardClasses = [];
 
-	public $fieldsets = [];
+	public $fieldsets;
 	public $fields;
 
 	public $htmlClasses = [];
@@ -73,6 +73,7 @@ class Form
 	public function __construct()
 	{
 		$this->fields = collect();
+		$this->fieldsets = collect();
 
 		$this->closureButtons = collect();
 	}
@@ -128,9 +129,20 @@ class Form
 		$this->card = $value;
 	}
 
+
 	public function assignModel(Model $model)
 	{
+		$this->setModel($model);
+	}
+
+	public function setModel(Model $model)
+	{
 		$this->model = $model;
+	}
+
+	public function getModel() : ? Model
+	{
+		return $this->model;
 	}
 
 	public function addFormField(FormField $formField)
@@ -160,6 +172,19 @@ class Form
 	public function hasDivider()
 	{
 		return $this->divider;
+	}
+
+	public function addFieldsets(Collection $fieldsetsCollection)
+	{
+		foreach($fieldsetsCollection as $fieldset)
+			$this->addFieldset($fieldset);
+	}
+
+	public function addFieldset(FormFieldset $fieldset)
+	{
+		$this->fieldsets->push($fieldset);
+
+		$fieldset->setForm($this);
 	}
 
 	public function addFormFieldset(string $name, array $parameters = [])
