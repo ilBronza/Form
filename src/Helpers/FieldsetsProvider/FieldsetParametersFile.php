@@ -136,6 +136,19 @@ class FieldsetParametersFile
 		if(! isset($parameters['required']))
 			$parameters['required'] = static::hasRequiredRule($parameters['rules']);
 
+		if($parameters['type'] == 'json')
+		{
+			foreach($parameters['fields'] as $fieldName => $fieldParameters)
+			{
+				if(count($fieldParameters) == 1)
+					$fieldParameters = static::getFieldParametersFromString($fieldParameters);
+
+				$fieldParameters = static::sanitizeRules($fieldParameters);
+
+				$parameters['fields'][$fieldName] = static::buildNameAndLabelArray($fieldName, $fieldParameters);
+			}
+		}
+
 		return $parameters;
 	}
 

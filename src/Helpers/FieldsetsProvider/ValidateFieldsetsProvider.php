@@ -51,6 +51,10 @@ class ValidateFieldsetsProvider extends FieldsetsProvider
 		$model = $this->getModel();
 
 		foreach($rules as $field => $rule)
+		{
+			if(is_string($rule))
+				$rule = explode('|', $rule);
+
 			foreach($rule as $index => $_rule)
 				if(strpos($_rule, "unique:") !== false)
 				{
@@ -63,6 +67,7 @@ class ValidateFieldsetsProvider extends FieldsetsProvider
 
 					$rules[$field] = $rule;
 				}
+		}
 
 		return $rules;
 	}
