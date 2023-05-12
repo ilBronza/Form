@@ -90,7 +90,7 @@ class FieldsetsProvider
 
 	protected function _getFieldsetFields(array $fieldsetParameters) : array
 	{
-		if($fieldsetParameters['fields'] ?? false)
+		if(isset($fieldsetParameters['fields']))
 			return $fieldsetParameters['fields'];
 
 		return $fieldsetParameters;
