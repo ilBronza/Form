@@ -2,8 +2,28 @@
 
 namespace IlBronza\Form\Helpers\FieldsetsProvider;
 
+use IlBronza\CRUD\Helpers\ModelManagers\CrudModelManager;
+use Illuminate\Database\Eloquent\Model;
+
 class FieldsetParametersFile
 {
+	public $modelManager;
+
+	public function setModelManager(CrudModelManager $modelManager)
+	{
+		$this->modelManager = $modelManager;
+	}
+
+	public function getModelManager() : CrudModelManager
+	{
+		return $this->modelManager;
+	}
+
+	public function getModel() : Model
+	{
+		return $this->getModelManager()->getModel();
+	}
+
 	// public function getShowFieldsetsArray() : array
 	// {
 	// 	return $this->parameters;
