@@ -30,7 +30,7 @@
                 </div>
 
                 @if(count($fieldset->fieldsets))
-                <div class="uk-padding-small">
+                <div uk-grid class="uk-padding-small">
                     @foreach($fieldset->fieldsets as $fieldset)
                         @include('form::uikit._fieldset')
                     @endforeach
