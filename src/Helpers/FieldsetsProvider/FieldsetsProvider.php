@@ -168,7 +168,17 @@ class FieldsetsProvider
 	{
 		$fieldsetsArray = $this->getParametersArray();
 
-		return $this->_getFieldsetsCollection($fieldsetsArray);
+		$this->fieldsetsCollection = $this->_getFieldsetsCollection($fieldsetsArray);
+
+		return $this->fieldsetsCollection;
+	}
+
+	public function provideFieldsetsCollection() : Collection
+	{
+		if($this->fieldsetsCollection)
+			return $this->fieldsetsCollection;
+
+		return $this->getFieldsetsCollection();
 	}
 
 	public function setFieldsetsCollectionToModel()
@@ -188,6 +198,16 @@ class FieldsetsProvider
 		$fieldsetsCollection = $this->getFieldsetsCollection();
 
 		$this->form->addFieldsets($fieldsetsCollection);
+	}
+
+	public function assignModelToFields()
+	{
+		foreach($this->getFieldsetsCollection() as $fieldset)
+			$fieldset->setModelRecursively(
+				$this->getModel()
+			);
+
+		return $this;
 	}
 
 

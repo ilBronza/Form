@@ -4,6 +4,7 @@ namespace IlBronza\Form;
 
 use IlBronza\Form\FormFieldset;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use \IlBronza\FormField\FormField;
 
@@ -101,6 +102,17 @@ class FormFieldset
 	public function setModel(Model $model)
 	{
 		$this->model = $model;
+	}
+
+	public function setModelRecursively(Model $model)
+	{
+		$this->setModel($model);
+
+		foreach($this->getFields() as $field)
+			$field->setModel($model);
+
+		foreach($this->getFieldsets() as $fieldset)
+			$fieldset->setModelRecursively($model);
 	}
 
 	public function getModel() : ? Model
@@ -257,6 +269,11 @@ class FormFieldset
 		return $this;
 	}
 
+	public function getFields() : Collection
+	{
+		return $this->fields;
+	}
+
 	public function getColumns()
 	{
 		return $this->columns;
@@ -351,6 +368,11 @@ class FormFieldset
 		$this->fieldsets->push($formFieldset);
 
 		$formFieldset->setParentFieldset($this);
+	}
+
+	public function getFieldsets() : Collection
+	{
+		return $this->fieldsets;
 	}
 
 	public function setParentFieldset(FormFieldset $formFieldset)
