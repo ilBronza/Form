@@ -1,4 +1,4 @@
-<div class="{{ $fieldset->getContainerHtmlClassesString() }}">
+<div {{ $fieldset->getContainerHtmlAttributesString() }} class="{{ $fieldset->getContainerHtmlClassesString() }}">
 
     <div>
 
@@ -19,18 +19,20 @@
                 @endif
 
                 @if($fieldset->getView())
-                {!! $fieldset->renderView() !!}
+                <div {{ $fieldset->getHtmlAttributesString() }}>
+                    {!! $fieldset->renderView() !!}
+                </div>
                 @endif
 
 
                 <div>
-                    <div uk-grid class="{{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
+                    <div {{ $fieldset->getHtmlAttributesString() }} uk-grid class="uk-grid-small {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
                         @include('form::uikit._fields', ['fields' => $fieldset->fields])
                     </div>            
                 </div>
 
                 @if(count($fieldset->fieldsets))
-                <div uk-grid class="uk-padding-small">
+                <div uk-grid class="uk-padding-small uk-grid-small @if($fieldset->hasDivider()) uk-grid-divider @endif">
                     @foreach($fieldset->fieldsets as $fieldset)
                         @include('form::uikit._fieldset')
                     @endforeach

@@ -21,8 +21,10 @@ class FormFieldset
 	public $width = 1;
 	public $columns = 1;
 
+	public $containerHtmlAttributes = [];
 	public $containerHtmlClasses = [];
 
+	public $htmlAttributes = [];
 	public $htmlClasses = [
 		'uk-margin-bottom',
 		'uk-fieldset'
@@ -309,9 +311,29 @@ class FormFieldset
 		);
 	}
 
+	public function getContainerHtmlAttributesString() : string
+	{
+		return implode(" ", $this->getContainerHtmlAttributes());
+	}
+
+	public function getHtmlAttributesString() : string
+	{
+		return implode(" ", $this->getHtmlAttributes());		
+	}
+
 	public function getContainerHtmlClassesString() : string
 	{
 		return implode(" ", $this->getContainerHtmlClasses());
+	}
+
+	public function getContainerHtmlAttributes() : array
+	{
+		return $this->containerHtmlAttributes;
+	}
+
+	public function getHtmlAttributes() : array
+	{
+		return $this->htmlAttributes;
 	}
 
 	public function getContainerHtmlClasses() : array
