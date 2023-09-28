@@ -16,7 +16,7 @@
 
 @else
 
-<div uk-grid uk-height-match class="uk-grid-divider uk-grid-small">
+<div uk-grid uk-height-match class="@if($form->hasDivider()) uk-grid-divider @endif uk-grid-small">
     
     @foreach($form->fieldsets as $name => $fieldset)
         @include('form::uikit._fieldset')

@@ -60,10 +60,12 @@ class Form
 	public $orientation = 'uk-form-horizontal';
 	public $translateLegend = true;
 
+	public $closureAlignment = 'left';
+
 	public $submitButtonText;
 
 	public $collapse = true;
-	public $divider = true;
+	public $divider = false;
 
 	public $allDatabaseFields = [];
 
@@ -76,6 +78,16 @@ class Form
 		$this->fieldsets = collect();
 
 		$this->closureButtons = collect();
+	}
+
+	public function getClosureAlignmentString() : string
+	{
+		return $this->closureAlignment;
+	}
+
+	public function setClosureAlignmentString(string $position)
+	{
+		$this->closureAlignment = $position;
 	}
 
 	public function setTranslateLegend(bool $value)

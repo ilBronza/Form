@@ -10,6 +10,7 @@ use \IlBronza\FormField\FormField;
 
 class FormFieldset
 {
+	public $showLegend = true;
 	public $fields;
 	public $fieldsets;
 	public $parentFieldset;
@@ -155,6 +156,11 @@ class FormFieldset
 			return false;
 
 		return $this->view['name'];
+	}
+
+	public function showLegend() : bool
+	{
+		return $this->showLegend;
 	}
 
 	public function renderView()
