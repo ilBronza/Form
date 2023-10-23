@@ -31,6 +31,11 @@ class FormFieldset
 		'uk-fieldset'
 	];
 
+	public $legendHtmlClasses = [];
+	public $bodyHtmlClasses = [];
+
+	public $gridSizeHtmlClass = 'uk-grid-small';
+
 	public $collapse = true;
 	public $divider = false;
 	public $uniqueId;
@@ -39,7 +44,8 @@ class FormFieldset
 	public $descriptionText;
 
 	public $translateLegend = true;
-	public ?string $translatedLegend = null;
+	public ? string $translatedLegend = null;
+	public ? string $translationPrefix = null;
 
 	public $visible = true;
 
@@ -249,6 +255,16 @@ class FormFieldset
 		return implode(" ", $this->getHtmlClasses());
 	}
 
+	public function getLegendHtmlClassesString()
+	{
+		return implode(" ", $this->getLegendHtmlClasses());
+	}
+
+	public function getBodyHtmlClassesString()
+	{
+		return implode(" ", $this->getBodyHtmlClasses());		
+	}
+
 	private function manageParameters(array $parameters)
 	{
 		if($width = ($parameters['width'] ?? false))
@@ -265,6 +281,16 @@ class FormFieldset
 
 		foreach($parameters as $key => $value)
 			$this->$key = $value;
+	}
+
+	public function getFieldsDefaultParameters() : array
+	{
+		$result = [];
+
+		if($this->translationPrefix)
+			$result['translationPrefix'] = $this->translationPrefix;
+
+		return $result;
 	}
 
 	public function addFormField(FormField $formField)
@@ -317,6 +343,16 @@ class FormFieldset
 		);
 	}
 
+	public function getLegendHtmlClasses() : array
+	{
+		return $this->legendHtmlClasses;
+	}
+
+	public function getBodyHtmlClasses() : array
+	{
+		return $this->bodyHtmlClasses;
+	}
+
 	public function getContainerHtmlAttributesString() : string
 	{
 		return implode(" ", $this->getContainerHtmlAttributes());
@@ -325,6 +361,11 @@ class FormFieldset
 	public function getHtmlAttributesString() : string
 	{
 		return implode(" ", $this->getHtmlAttributes());		
+	}
+
+	public function getGridSizeHtmlClass() : string
+	{
+		return $this->gridSizeHtmlClass;
 	}
 
 	public function getContainerHtmlClassesString() : string

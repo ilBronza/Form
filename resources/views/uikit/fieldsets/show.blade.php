@@ -26,13 +26,13 @@
 
 
                 <div>
-                    <div {{ $fieldset->getHtmlAttributesString() }} uk-grid class="uk-grid-small {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
+                    <div {{ $fieldset->getHtmlAttributesString() }} uk-grid class="{{ $fieldset->getGridSizeHtmlClass() }} {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
                         @include('form::uikit.fields.show', ['fields' => $fieldset->fields])
                     </div>
                 </div>
 
                 @if(count($fieldset->fieldsets))
-				<div uk-grid uk-height-match class="uk-grid-divider uk-grid-small">
+				<div uk-grid uk-height-match class="uk-grid-divider {{ $fieldset->getGridSizeHtmlClass() }}">
                     @foreach($fieldset->fieldsets as $fieldset)
                         @include('form::uikit.fieldsets.show')
                     @endforeach

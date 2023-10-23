@@ -34,6 +34,7 @@ class Form
 		return static::$availableExtraViewsPositions;
 	}
 
+	public $gridSizeHtmlClass = 'uk-grid';
 
 	public $method = 'POST';
 	public $action;
@@ -357,6 +358,11 @@ class Form
 	public function getDatabaseField(string $name)
 	{
 		return $this->allDatabaseFields[$name] ?? null;
+	}
+
+	public function getGridSizeHtmlClass() : string
+	{
+		return $this->gridSizeHtmlClass;
 	}
 
 	public function getName()

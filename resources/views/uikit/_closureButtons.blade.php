@@ -1,6 +1,18 @@
-<div class="uk-text-{{ $form->getClosureAlignmentString() }} uk-margin-top">
+<div class="uk-text-{{ $form->getClosureAlignmentString() }} uk-margin-top ibform-closure-buttons">
+	<div id="recaptcha"></div>
+	<br />
 	
 	<input 
+
+
+{{--
+		data-sitekey="6LfvOKooAAAAAKuyQm3XDSxobDp5_q3OzpExDZja" 
+        data-callback='onSubmit' 
+        data-action='submit'
+ --}}
+
+		{{-- class="g-recaptcha uk-button uk-button-primary" --}}
+
 		class="uk-button uk-button-primary"
 		type="submit"
 		name="save"
