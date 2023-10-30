@@ -131,12 +131,24 @@ class FieldsetsProvider
 			$this->userCanSeeFieldsetByRoles($fieldsetParameters)
 		);
 
+		$fieldsDefaultParameters = $fieldset->getFieldsDefaultParameters();
+
 		$fields = $this->getFieldsetFields($fieldsetParameters);
 
-		foreach($fields as $fieldName => $field)
-			$fieldset->addFormField(
-				FormFieldsProvider::createByNameParameters($fieldName, $field)
+		foreach($fields as $fieldName => $fieldParameters)
+		{
+			$parameters = array_merge(
+				$fieldsDefaultParameters,
+				$fieldParameters
 			);
+
+			$fieldset->addFormField(
+				FormFieldsProvider::createByNameParameters(
+					$fieldName,
+					$parameters
+				)
+			);			
+		}
 
 		$subFieldsets = $this->getSubFieldsets($fieldsetParameters);
 

@@ -78,8 +78,8 @@ class FieldsetParametersFile
 		if(! ($parameters['name'] ?? false))
 			$parameters['name'] = $name;
 
-		if(! isset($parameters['label']))
-			$parameters['label'] = __('fields.' . $name);
+		// if(! isset($parameters['label']))
+		// 	$parameters['label'] = __('fields.' . $name);
 
 		return $parameters;
 	}

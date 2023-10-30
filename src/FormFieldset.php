@@ -212,13 +212,18 @@ class FormFieldset
 		return $this->form->translateLegend();
 	}
 
+	public function getTranslationPrefix() : string
+	{
+		return $this->translationPrefix ?? 'fieldsets';
+	}
+
 	public function getLegend()
 	{
 		if($this->translatedLegend)
 			return $this->translatedLegend;
 
 		if($this->translateLegend())
-			return __('fieldsets.' . $this->legend);
+			return __($this->getTranslationPrefix() . '.' . $this->legend);
 
 		return $this->legend;
 	}
