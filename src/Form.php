@@ -70,6 +70,8 @@ class Form
 
 	public $allDatabaseFields = [];
 
+	public $showElementUrl;
+
 
 	public $closureButtons;
 
@@ -101,9 +103,11 @@ class Form
 		return $this->translateLegend;
 	}
 
-	public function setTitle(string $title)
+	public function setTitle(string $title) : static
 	{
 		$this->title = $title;
+
+		return $this;
 	}
 
 	public function getTitle()
@@ -132,6 +136,13 @@ class Form
 	public function getCardClasses()
 	{
 		return $this->cardClasses;
+	}
+
+	public function setCard() : static
+	{
+		$this->hasCard(true);
+
+		return $this;
 	}
 
 	public function hasCard(bool $value = null)
@@ -247,12 +258,34 @@ class Form
 		return $this->action;
 	}
 
-	public function getCancelHref()
+	public function getCancelUrl()
 	{
-		if($this->cancelHref)
-			return $this->cancelHref;
+		if($href = $this->getCancelHref())
+			return $href;
+
+		try
+		{
+			if($href = $this->getModel()->getIndexUrl())
+				return $href;
+		}
+		catch(\Throwable $e)
+		{
+			return url()->previous();
+		}
 
 		return url()->previous();
+	}
+
+	public function setCancelHref(string $href) : static
+	{
+		$this->cancelHref = $href;
+
+		return $this;
+	}
+
+	public function getCancelHref()
+	{
+		return $this->cancelHref;
 	}
 
 	public function getBackToListUrl()
@@ -265,14 +298,26 @@ class Form
 		$this->backToListUrl = $url;
 	}
 
+	public function getShowElementUrl()
+	{
+		return $this->showElementUrl;
+	}
+
+	public function setShowElementUrl(string $url)
+	{
+		$this->showElementUrl = $url;
+	}
+
 	public function getFormOrientationClass()
 	{
 		return $this->orientation;
 	}
 
-	public function setVerticalForm()
+	public function setVerticalForm() : static
 	{
 		$this->orientation = 'uk-form-stacked';
+
+		return $this;
 	}
 
 	public function setStackedForm()

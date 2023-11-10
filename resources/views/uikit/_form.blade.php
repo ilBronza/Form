@@ -29,8 +29,13 @@
     <div class="uk-card uk-card-default {{ implode(' ', $form->getCardClasses()) }}">
         <div class="uk-card-header">
             <span class="uk-h3 uk-display-block">{!! $form->getTitle() !!}</span>
+
             @if($backUrl = $form->getBackToListUrl())
-            <span class="uk-h5"><a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a> </span>
+            <span class="uk-h5 uk-margin-large-right"><a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a> </span>
+            @endif
+
+            @if($showUrl = $form->getShowElementUrl())
+            <span class="uk-h5"><a href="{{ $showUrl }}">@lang('crud::crud.showElement', ['element' => $form->getModel()?->getName()])</a> </span>
             @endif
 
             @if($formIntro = $form->getIntro())

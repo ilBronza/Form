@@ -18,7 +18,7 @@ trait FormButtonsTrait
 
 		$button = Button::create([
 			'text' => 'form::form.cancel',
-			'href' => $this->getCancelHref()
+			'href' => $this->getCancelUrl()
 		]);
 
 		$button->addClass('uk-button-default');
