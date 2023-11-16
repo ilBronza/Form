@@ -18,6 +18,8 @@ class Form
 	use ExtraViewsTrait;
 
 	public $extraViews;
+	public Collection $fetchers;
+
 	static $availableExtraViewsPositions = [
 		'outherTop',
 		'outherBottom',
@@ -81,6 +83,8 @@ class Form
 		$this->fieldsets = collect();
 
 		$this->closureButtons = collect();
+
+		$this->fetchers = collect();
 	}
 
 	public function getClosureAlignmentString() : string
