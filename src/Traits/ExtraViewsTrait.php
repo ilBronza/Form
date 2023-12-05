@@ -14,6 +14,12 @@ trait ExtraViewsTrait
 	{
 		return $this->extraViews ?? null;
 	}
+
+	public function setFetchers()
+	{
+        $this->fetchers = collect();		
+	}
+
 	public function getFetchers() : Collection
 	{
 		return $this->fetchers;
