@@ -54,7 +54,12 @@ class FormFieldset
 		$this->visible = $visible;
 	}
 
-	public function getVisibility(bool $visible)
+	public function getVisibility() : bool
+	{
+		return $this->isVisible();
+	}
+
+	public function isVisible() : bool
 	{
 		return $this->visible;
 	}

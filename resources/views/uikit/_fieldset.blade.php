@@ -1,3 +1,4 @@
+@if($fieldset->isVisible())
 <div {{ $fieldset->getContainerHtmlAttributesString() }} class="{{ $fieldset->getContainerHtmlClassesString() }}">
 
     <div>
@@ -48,3 +49,4 @@
 
 </div>
 
+@endif

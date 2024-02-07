@@ -72,7 +72,6 @@ class ValidateFieldsetsProvider extends FieldsetsProvider
 		return $rules;
 	}
 
-
 	public function getValidationArrayByFieldset(array $fieldset, array $validationArray) : array
 	{
 		if(! $this->userCanSeeFieldsetByRoles($fieldset))

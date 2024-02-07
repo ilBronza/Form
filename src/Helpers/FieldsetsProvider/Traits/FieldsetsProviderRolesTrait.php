@@ -14,7 +14,7 @@ trait FieldsetsProviderRolesTrait
 		if(! Auth::user())
 			abort(403);
 
-		return Auth::user()->hasAnyRole($fieldsetParameters['roles']);		
+		return Auth::user()->hasAnyRole($fieldsetParameters['roles']);
 	}
 
 	protected function filterByRolesAndPermissions(array $fields) : array
