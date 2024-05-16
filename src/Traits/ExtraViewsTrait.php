@@ -57,7 +57,7 @@ trait ExtraViewsTrait
 		]);
 	}
 
-	public function addExtraView(string $position, string $viewName, array $parameters)
+	public function addExtraView(string $position, string $viewName, array $parameters = [])
 	{
 		$this->checkValidPosition($position);
 		$this->checkForExtraViewsCollection();

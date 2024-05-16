@@ -3,11 +3,13 @@
 	action="{{ $form->getAction() }}"
 	role="form" 
 
+	id="{{ $form->getId() }}"
+
 	@if($methodAttribute == 'POST')
 	enctype="multipart/form-data" 
 	@endif
 
-	class="uk-form {{ $form->getFormOrientationClass() }}"
+	class="uk-form {{ $form->getFormOrientationClass() }} {{ $form->getFormHtmlClassesString() }}"
 >
 
 	@if(! in_array($method = $form->getMethod(), ['GET', 'POST']) )

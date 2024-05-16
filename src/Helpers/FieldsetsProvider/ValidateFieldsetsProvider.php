@@ -102,10 +102,10 @@ class ValidateFieldsetsProvider extends FieldsetsProvider
 
 		foreach($fieldContent['fields'] as $subFieldName => $subFieldContent)
 		{
-			$_validationKey = $fieldName . '.' . $subFieldName;
+			$_validationKey = $fieldName . '.*.' . $subFieldName;
 
-			$validationArray[$_validationKey] = 'array';
-			$validationArray = $this->addValidationArrayField($validationArray, $subFieldContent, $_validationKey . '.*');
+			// $validationArray[$_validationKey] = 'array';
+			$validationArray = $this->addValidationArrayField($validationArray, $subFieldContent, $_validationKey);
 		}
 
 		return $validationArray;
@@ -114,6 +114,9 @@ class ValidateFieldsetsProvider extends FieldsetsProvider
 
 	private function addValidationArrayMultipleRow(array $validationArray, array $fieldContent, string $fieldName) :array
 	{
+		if(($fieldContent['displayMode'] ?? false) == 'show')
+			return $validationArray;
+
 		if($fieldContent['disabled'] ?? false)
 			return $validationArray;
 

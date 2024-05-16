@@ -6,6 +6,25 @@ use IlBronza\Buttons\Button;
 
 trait FormButtonsTrait
 {
+	public $hasSubmitButton = true;
+
+	public function setDefaultNavbarButtons() { }
+
+	public function hasSubmitButton()
+	{
+		return $this->hasSubmitButton;
+	}
+
+	public function setHasSubmitButton(bool $hasSubmitButton = true)
+	{
+		$this->hasSubmitButton = $hasSubmitButton;
+	}
+
+	public function setCancelButton(bool $hasCancelButton)
+	{
+		$this->cancelButton = $hasCancelButton;
+	}
+
 	public function hasCancelButton()
 	{
 		return $this->cancelButton;
@@ -32,6 +51,18 @@ trait FormButtonsTrait
 		// );
 
 		return $button;
+	}
+
+
+
+	public function setSubmitButtonHtmlClasses(array $submitButtonHtmlClasses = [])
+	{
+		$this->submitButtonHtmlClasses = $submitButtonHtmlClasses;
+	}
+
+	public function getSubmitButtonHtmlClasses() : string
+	{
+		return implode(" ", $this->submitButtonHtmlClasses ?? ['uk-button uk-button-primary']);
 	}
 
 	public function setSubmitButtonText(string $submitButtonText)
@@ -73,6 +104,20 @@ trait FormButtonsTrait
 		$button = Button::create([
 			'name' => 'save_and_refresh',
 			'text' => 'form::form.saveAndRefresh'
+		]);
+
+		$button->setPrimary();
+
+		$button->setSubmit();
+
+		$this->addClosureButton($button);
+	}
+
+	public function addSaveAndCopyButton()
+	{
+		$button = Button::create([
+			'name' => 'save_and_copy',
+			'text' => 'form::form.saveAndCopy'
 		]);
 
 		$button->setPrimary();

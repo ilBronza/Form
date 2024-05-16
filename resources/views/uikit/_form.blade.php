@@ -4,6 +4,25 @@
     <span class="uk-display-block uk-text-danger uk-h3">Se alcune informazioni non sono visibili, contattare assistenza. <pre>{{ json_encode($extraViews) }}</pre></span>
 @endif
 
+@if(isset($buttons))
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+            <ul class="uk-navbar-nav">
+                @isset($backToListUrl)
+                <li><a href="{{ $backToListUrl }}">@lang('crud::crud.backToList')</a></li>
+                @endisset
+
+                @foreach($buttons as $button)
+                    @if($button)
+                        <li>{!! $button->renderLink() !!}</li>
+                    @endif
+                @endforeach
+            </ul>
+        </div>
+    </nav>
+@endif
+
+
 @if($form->hasExtraViewsPositions('outherLeft', 'outherRight'))
 <div uk-grid>
 
@@ -14,7 +33,9 @@
 
     {!! $form->renderExtraViews('outherTop') !!}
 
-@include('form::uikit._opening')
+@if($form->isInFormDisplayMode())
+    @include('form::uikit._opening')
+@endif
 
 @if($form->hasExtraViewsPositions('right', 'left'))
 <div uk-grid>
@@ -27,23 +48,43 @@
 	@if($form->hasCard())
 
     <div class="uk-card uk-card-default {{ implode(' ', $form->getCardClasses()) }}">
+
         <div class="uk-card-header">
-            <span class="uk-h3 uk-display-block">{!! $form->getTitle() !!}</span>
 
-            @if($backUrl = $form->getBackToListUrl())
-            <span class="uk-h5 uk-margin-large-right"><a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a> </span>
-            @endif
+            <div uk-grid>
+                
+                <div class="uk-h3 uk-display-block uk-width-expand">{!! $form->getTitle() !!}</div>
 
-            @if($showUrl = $form->getShowElementUrl())
-            <span class="uk-h5"><a href="{{ $showUrl }}">@lang('crud::crud.showElement', ['element' => $form->getModel()?->getName()])</a> </span>
-            @endif
+                @if($backUrl = $form->getBackToListUrl())
+                <div class="uk-width-auto uk-h5 uk-margin-large-right">
+                    <a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a>
+                </div>
+                @endif
+
+                @if($form->hasButtonsNavbar())
+                    {!! $form->getButtonsNavbar()->render() !!}
+
+                @else
+                            @if($form->isInFormDisplayMode())
+                                        @if($showUrl = $form->getShowElementUrl())
+                                            <span class="uk-h5"><a href="{{ $showUrl }}">@lang('crud::crud.showElement', ['element' => $form->getModel()?->getName()])</a> </span>
+                                        @endif
+                            @else
+                                            @include('crud::utilities.editLink', ['element' => $form->getModel()])
+                            @endif
+                                
+                @endif
+
+            </div>
 
             @if($formIntro = $form->getIntro())
             <div class="uk-margin-top">
                 {!! $formIntro !!}
             </div>
             @endif
+
         </div>
+
         <div class="uk-card-body">
 
             {!! $form->renderExtraViews('innerTop') !!}
@@ -53,9 +94,11 @@
             {!! $form->renderExtraViews('innerBottom') !!}
 
         </div>
+@if($form->isInFormDisplayMode())
         <div class="uk-card-footer">
             @include('form::uikit._closureButtons')
         </div>
+@endif
     </div>
 
 	@else
@@ -64,7 +107,9 @@
         @include('form::uikit._content')
         {!! $form->renderExtraViews('innerBottom') !!}
 
+@if($form->isInFormDisplayMode())
 		@include('form::uikit._closureButtons')
+@endif
 
 	@endif
 

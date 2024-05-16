@@ -2,6 +2,8 @@
 	<div id="recaptcha"></div>
 	<br />
 	
+	@if($form->hasSubmitButton())
+	<div class="submitcontainer uk-float-left">
 	<input 
 
 
@@ -13,11 +15,13 @@
 
 		{{-- class="g-recaptcha uk-button uk-button-primary" --}}
 
-		class="uk-button uk-button-primary"
+		class="{{ $form->getSubmitButtonHtmlClasses() }}"
 		type="submit"
 		name="save"
 		value="{{ $form->getSubmitButtonText() }}"
-		>
+		></div>
+
+	@endif
 
 	@foreach($form->getClosureButtons() as $button)
 		@if($button->isSubmit())

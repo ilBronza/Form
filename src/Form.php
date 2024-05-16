@@ -2,6 +2,7 @@
 
 namespace IlBronza\Form;
 
+use IlBronza\CRUD\Traits\IlBronzaPackages\CRUDExtraButtonsTrait;
 use IlBronza\Form\FormFieldset;
 use IlBronza\Form\Traits\ExtraViewsTrait;
 use IlBronza\Form\Traits\FormButtonsTrait;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use \IlBronza\FormField\FormField;
 
 class Form
@@ -16,9 +18,12 @@ class Form
 	use FormButtonsTrait;
 
 	use ExtraViewsTrait;
+	use CRUDExtraButtonsTrait;
 
 	public $extraViews;
 	public Collection $fetchers;
+
+	public string $displayMode = 'form';
 
 	static $availableExtraViewsPositions = [
 		'outherTop',
@@ -129,6 +134,21 @@ class Form
 		return $this->intro;
 	}
 
+	public function addHtmlClass(string $htmlClass)
+	{
+		$this->htmlClasses[] = $htmlClass;
+	}
+
+	public function getHtmlClasses() : array
+	{
+		return $this->htmlClasses;
+	}
+
+	public function getFormHtmlClassesString() : string
+	{
+		return implode(" ", $this->getHtmlClasses());
+	}
+
 	public function addCardClasses(array $classes = [])
 	{
 		$this->cardClasses = array_merge(
@@ -192,6 +212,11 @@ class Form
 		$formField->setForm($this);
 	}
 
+	public function getFields() : Collection
+	{
+		return $this->fields;
+	}
+
 	public function setDivider(bool $value)
 	{
 		return $this->divider = $value;
@@ -247,6 +272,11 @@ class Form
 		return $method;
 	}
 
+	public function setMethod(string $method)
+	{
+		$this->method = $method;
+	}
+
 	public function getMethod()
 	{
 		return $this->method;
@@ -267,17 +297,23 @@ class Form
 		if($href = $this->getCancelHref())
 			return $href;
 
+		if(url()->previous() != url()->current())
+			return url()->previous();
+
 		try
 		{
-			if($href = $this->getModel()->getIndexUrl())
-				return $href;
+			if(($model = $this->getModel())&&($model->exists))
+				return $model->getShowUrl();
+
+			if(method_exists($model, 'getCancelUrl'))
+				return $model->getCancelUrl();
+
+			return $model->getIndexUrl();			
 		}
-		catch(\Throwable $e)
+		catch(\Exception $e)
 		{
 			return url()->previous();
 		}
-
-		return url()->previous();
 	}
 
 	public function setCancelHref(string $href) : static
@@ -295,6 +331,18 @@ class Form
 	public function getBackToListUrl()
 	{
 		return $this->backToListUrl ?? false;
+	}
+
+	public function setEditElementUrl(string $url) : static
+	{
+		$this->editElementUrl = $url;
+
+		return $this;
+	}
+
+	public function getEditElementUrl() : ? string
+	{
+		return $this->editElementUrl ?? null;
 	}
 
 	public function setBackToListUrl(string $url)
@@ -389,6 +437,50 @@ class Form
 		return view("form::uikit._form", ['form' => $this]);
 	}
 
+	public function _renderAjax()
+	{
+		return view("form::uikit._ajax", ['form' => $this]);
+	}
+
+	public function getDisplayMode() : string
+	{
+		return $this->displayMode;
+	}
+
+	public function isInFormDisplayMode() : bool
+	{
+		return $this->getDisplayMode() == 'form';
+	}
+
+	public function isInPdfDisplayMode() : bool
+	{
+		return $this->getDisplayMode() == 'pdf';
+	}
+
+	public function isInShowDisplayMode()
+	{
+		return $this->getDisplayMode() == 'show';
+	}
+
+	public function setDisplayMode(string $mode) : static
+	{
+		$this->displayMode = $mode;
+
+		return $this;
+	}
+
+	public function _renderPdf() : View
+	{
+		return $this->setDisplayMode('pdf')
+				->_render();
+	}
+
+	public function _renderShow() : View
+	{
+		return $this->setDisplayMode('show')
+				->_render();
+	}
+
 	public function renderContent()
 	{
 		return view("form::uikit._content", ['form' => $this])->render();
@@ -414,15 +506,18 @@ class Form
 		return $this->gridSizeHtmlClass;
 	}
 
-	public function getName()
+	public function getName() : ? string
 	{
 		if($this->name ?? false)
 			return $this->name;
 
+		if($model = $this->getModel())
+			return $this->name = $model->getName();
+
 		return Route::currentRouteName();
 	}
 
-	public function getId()
+	public function getId() : ? string
 	{
 		if($this->id ?? false)
 			return $this->id;
