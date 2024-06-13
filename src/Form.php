@@ -310,7 +310,7 @@ class Form
 
 			return $model->getIndexUrl();			
 		}
-		catch(\Exception $e)
+		catch(\Throwable $e)
 		{
 			return url()->previous();
 		}
