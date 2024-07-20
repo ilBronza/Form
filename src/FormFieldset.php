@@ -143,6 +143,11 @@ class FormFieldset
 		return null;
 	}
 
+	public function getViewParameters() : array
+	{
+		return $this->view['parameters'] ?? [];
+	}
+
 	public function getViewVariables() : array
 	{
 		// if((! isset($this->form))&&(! isset($this->form->model)))
@@ -179,8 +184,11 @@ class FormFieldset
 		$viewName = $this->getView();
 
 		$variables = $this->getViewVariables();
+		$parameters = $this->getViewParameters();
 
-		return view($viewName, $variables)->render();
+		$resultingParameters = $variables + $parameters;
+
+		return view($viewName, $resultingParameters)->render();
 	}
 
 	public function hasCollapse()
