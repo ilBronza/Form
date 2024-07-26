@@ -365,6 +365,13 @@ class Form
 		return $this->orientation;
 	}
 
+	public function setHorizontalForm() : static
+	{
+		$this->orientation = 'uk-form-horizontal';
+
+		return $this;
+	}
+
 	public function setVerticalForm() : static
 	{
 		$this->orientation = 'uk-form-stacked';
