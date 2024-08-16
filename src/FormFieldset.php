@@ -10,6 +10,7 @@ use \IlBronza\FormField\FormField;
 
 class FormFieldset
 {
+	public Collection $fetchers;
 	public $showLegend = true;
 	public $fields;
 	public $fieldsets;
@@ -164,6 +165,14 @@ class FormFieldset
 			$result[$name] = $model->$method();
 
 		return $result;
+	}
+
+	public function getFetchers() : Collection
+	{
+		if(isset($this->fetchers))
+			return $this->fetchers;
+
+		return collect();
 	}
 
 	public function getView()

@@ -18,14 +18,20 @@
                 </div>
                 @endif
 
-                @if($fieldset->getView())
-                <div {{ $fieldset->getHtmlAttributesString() }}>
-                    {!! $fieldset->renderView() !!}
-                </div>
-                @endif
+                    @if($fieldset->getView())
+                        <div {{ $fieldset->getHtmlAttributesString() }}>
+                            {!! $fieldset->renderView() !!}
+                        </div>
+                    @endif
+
+                    @foreach($fieldset->getFetchers() as $fetcher)
+{{--                        <div {{ $fieldset->getHtmlAttributesString() }}>--}}
+                            {!! $fetcher->render() !!}
+{{--                        </div>--}}
+                    @endforeach
 
 
-                <div>
+                    <div>
                     <div {{ $fieldset->getHtmlAttributesString() }} uk-grid class="{{ $fieldset->getGridSizeHtmlClass() }} {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
                         @include('form::uikit.fields.show', ['fields' => $fieldset->fields])
                     </div>

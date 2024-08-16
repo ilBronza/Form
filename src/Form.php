@@ -43,6 +43,24 @@ class Form
 
 	public $gridSizeHtmlClass = 'uk-grid';
 
+	public bool $updateEditor;
+
+	public function hasUpdateEditor() : bool
+	{
+		if(! $this->getModel()?->exists)
+			return false;
+
+		if(isset($this->updateEditor))
+			return $this->updateEditor;
+
+		return config('form.updateEditor', false);
+	}
+
+	public function setUpdateEditor(bool $updateEditor) : void
+	{
+		$this->updateEditor = $updateEditor;
+	}
+
 	public $method = 'POST';
 	public $action;
 	public $model;
@@ -510,7 +528,7 @@ class Form
 
 	public function getGridSizeHtmlClass() : string
 	{
-		return $this->gridSizeHtmlClass;
+		return "{$this->gridSizeHtmlClass} " . config('form.grid-size', 'uk-grid-small');
 	}
 
 	public function getName() : ? string

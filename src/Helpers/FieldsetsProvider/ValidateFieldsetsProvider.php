@@ -120,6 +120,9 @@ class ValidateFieldsetsProvider extends FieldsetsProvider
 		if($fieldContent['disabled'] ?? false)
 			return $validationArray;
 
+		if($fieldContent['readOnly'] ?? false)
+			return $validationArray;
+
 		if($fieldContent['type'] == 'json')
 			return $this->addJsonFieldValidationArrayField($validationArray, $fieldContent, $fieldName);
 
