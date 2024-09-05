@@ -17,6 +17,37 @@ $ composer require ilbronza/form
 
 ## Usage
 
+## Fieldsets
+
+### Parameteri
+``` bash
+
+    #vengono aggiunte alle classi html di default
+    array 'classes' => [
+        'classe-uno',
+        'classe-due'
+    ]
+
+    #vengono sostituite alle classi html di default
+    array 'classes' => [
+        'classe-uno',
+        'classe-due'
+    ]
+    
+    #decide se mostrare o meno la legenda sul fieldset
+    bool 'showLegend' => true/false
+    
+    #decide se applicare o meno i divisori della grid uikit
+    bool 'divider' => true/false
+    
+    
+    
+    
+
+```
+
+
+### Esempio
 ``` bash
     static $formFields = [
         'common' => [

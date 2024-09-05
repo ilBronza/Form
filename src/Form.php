@@ -41,9 +41,21 @@ class Form
 		return static::$availableExtraViewsPositions;
 	}
 
+	public $marginSize = 'small';
+
+	public function getMarginSize() : string
+	{
+		return $this->marginSize;
+	}
+
 	public $gridSizeHtmlClass = 'uk-grid';
 
-	public bool $updateEditor;
+	public ?bool $updateEditor;
+
+	public function setUpdateEditor(bool $updateEditor = null) : void
+	{
+		$this->updateEditor = $updateEditor;
+	}
 
 	public function hasUpdateEditor() : bool
 	{
@@ -56,9 +68,18 @@ class Form
 		return config('form.updateEditor', false);
 	}
 
-	public function setUpdateEditor(bool $updateEditor) : void
+	public function hasClosureButtons() : bool
 	{
-		$this->updateEditor = $updateEditor;
+		if(! $this->isInFormDisplayMode())
+			return false;
+
+		if(! $model = $this->getModel())
+			return true;
+
+		if(! $model->exists)
+			return true;
+
+		return ! $this->hasUpdateEditor();
 	}
 
 	public $method = 'POST';
@@ -147,8 +168,16 @@ class Form
 		$this->intro = $intro;
 	}
 
-	public function getIntro()
+	public function mustShowIntro() : bool
 	{
+		return config('form.showIntro', true);
+	}
+
+	public function getIntro() : ? string
+	{
+		if(! $this->mustShowIntro())
+			return null;
+
 		return $this->intro;
 	}
 

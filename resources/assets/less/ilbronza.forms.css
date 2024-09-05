@@ -1,0 +1,8 @@
+fieldset[class^="uk-section-"] {
+  padding: 40px 20px 14px 20px;
+}
+fieldset[class^="uk-section-"] legend {
+  position: relative;
+  top: 30px;
+}
+/*# sourceMappingURL=ilbronza.forms.css.map */

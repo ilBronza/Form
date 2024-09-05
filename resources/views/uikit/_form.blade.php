@@ -94,7 +94,7 @@
             {!! $form->renderExtraViews('innerBottom') !!}
 
         </div>
-@if($form->isInFormDisplayMode())
+@if($form->hasClosureButtons())
         <div class="uk-card-footer">
             @include('form::uikit._closureButtons')
         </div>
@@ -107,7 +107,7 @@
         @include('form::uikit._content')
         {!! $form->renderExtraViews('innerBottom') !!}
 
-@if($form->isInFormDisplayMode())
+@if($form->hasClosureButtons())
 		@include('form::uikit._closureButtons')
 @endif
 

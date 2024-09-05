@@ -21,6 +21,8 @@ class FieldsetsProvider
 	public $form;
 	public $model;
 	public $parametersFile;
+	public $parameters;
+	public $fieldsetsCollection;
 
 	static function setFieldsetsParametersByFile(
 		FieldsetParametersFile $file,

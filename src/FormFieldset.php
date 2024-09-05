@@ -2,14 +2,16 @@
 
 namespace IlBronza\Form;
 
-use IlBronza\Form\FormFieldset;
+use Exception;
+use IlBronza\FormField\FormField;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use \IlBronza\FormField\FormField;
+use Illuminate\View\View;
 
 class FormFieldset
 {
+	public ? Model $model;
 	public Collection $fetchers;
 	public $showLegend = true;
 	public $fields;
@@ -32,6 +34,16 @@ class FormFieldset
 		'uk-fieldset'
 	];
 
+	public function getMarginSize() : string
+	{
+		if($form = $this->getForm())
+			return $form->getMarginSize();
+
+		return 'medium';
+	}
+
+	public $extraHtmlClasses = [];
+
 	public $legendHtmlClasses = [];
 	public $bodyHtmlClasses = [];
 
@@ -45,10 +57,79 @@ class FormFieldset
 	public $descriptionText;
 
 	public $translateLegend = true;
-	public ? string $translatedLegend = null;
-	public ? string $translationPrefix = null;
+	public ?string $translatedLegend = null;
+	public ?string $translationPrefix = null;
 
 	public $visible = true;
+
+	public function __construct(string $name, Form $form = null, array $parameters = [])
+	{
+		$this->name = $name;
+		$this->legend = $name;
+		$this->form = $form;
+
+		$this->fields = collect();
+
+		$this->manageParameters($parameters);
+		$this->setUniqueId($parameters['id'] ?? null);
+
+		$this->fieldsets = collect();
+	}
+
+	private function manageParameters(array $parameters)
+	{
+		if ($width = ($parameters['width'] ?? false))
+			$this->setWidth($width);
+
+		if ($classes = ($parameters['classes'] ?? false))
+			$this->addHtmlClasses($classes);
+
+		if ($containerClasses = ($parameters['containerClasses'] ?? false))
+			$this->addContainerHtmlClasses($containerClasses);
+
+		if ($columns = ($parameters['columns'] ?? false))
+			$this->setFieldsColumns($columns);
+
+		foreach ($parameters as $key => $value)
+			$this->$key = $value;
+	}
+
+	public function setWidth($width)
+	{
+		$this->width = $width;
+	}
+
+	public function addHtmlClasses(array $classes)
+	{
+		foreach ($classes as $class)
+			$this->addClass($class);
+	}
+
+	public function addClass(string $class)
+	{
+		$this->htmlClasses[] = $class;
+	}
+
+	public function addContainerHtmlClasses(array $classes)
+	{
+		foreach ($classes as $class)
+			$this->addContainerClass($class);
+	}
+
+	public function addContainerClass(string $class)
+	{
+		$this->containerHtmlClasses[] = $class;
+	}
+
+	public function setFieldsColumns($columns)
+	{
+		$this->columns = $columns;
+	}
+
+	static function createByNameAndParameters(string $name, array $parameters)
+	{
+		return new static($name, null, $parameters);
+	}
 
 	public function setVisibility(bool $visible)
 	{
@@ -69,39 +150,7 @@ class FormFieldset
 	{
 		$this->form = null;
 
-		return json_encode( $this);
-	}
-
-	public function __construct(string $name, Form $form = null, array $parameters = [])
-	{
-		$this->name = $name;
-		$this->legend = $name;
-		$this->form = $form;
-
-		$this->fields = collect();
-
-		$this->manageParameters($parameters);
-		$this->setUniqueId($parameters['id'] ?? null);
-
-		$this->fieldsets = collect();
-	}
-
-	public function setUniqueId(string $uniqueId = null) : string
-	{
-		if($uniqueId)
-			return $this->uniqueId = $uniqueId;
-
-		return $this->uniqueId = Str::slug($this->name) . "_" . rand(0, 99999);
-	}
-
-	public function setForm(Form $form = null)
-	{
-		$this->form = $form;
-	}
-
-	public function getForm() : ? Form
-	{
-		return $this->form;
+		return json_encode($this);
 	}
 
 	public function getUniqueId()
@@ -109,9 +158,23 @@ class FormFieldset
 		return $this->uniqueId;
 	}
 
-	public function hasView()
+	public function setUniqueId(string $uniqueId = null) : string
 	{
-		return isset($this->view);
+		if ($uniqueId)
+			return $this->uniqueId = $uniqueId;
+
+		return $this->uniqueId = Str::slug($this->name) . "_" . rand(0, 99999);
+	}
+
+	public function setModelRecursively(Model $model)
+	{
+		$this->setModel($model);
+
+		foreach ($this->getFields() as $field)
+			$field->setModel($model);
+
+		foreach ($this->getFieldsets() as $fieldset)
+			$fieldset->setModelRecursively($model);
 	}
 
 	public function setModel(Model $model)
@@ -119,68 +182,22 @@ class FormFieldset
 		$this->model = $model;
 	}
 
-	public function setModelRecursively(Model $model)
+	public function getFields() : Collection
 	{
-		$this->setModel($model);
-
-		foreach($this->getFields() as $field)
-			$field->setModel($model);
-
-		foreach($this->getFieldsets() as $fieldset)
-			$fieldset->setModelRecursively($model);
+		return $this->fields;
 	}
 
-	public function getModel() : ? Model
+	public function getFieldsets() : Collection
 	{
-		if($this->model ?? null)
-			return $this->model;
-
-		if($model = $this->getForm()?->getModel())
-			return $model;
-
-		if($model = $this->getParentFieldset()?->getModel())
-			return $model;
-
-		return null;
-	}
-
-	public function getViewParameters() : array
-	{
-		return $this->view['parameters'] ?? [];
-	}
-
-	public function getViewVariables() : array
-	{
-		// if((! isset($this->form))&&(! isset($this->form->model)))
-		// 	return [];
-
-		// $model = $this->form->model;
-
-		if(! ($model = $this->getModel()))
-			return [];
-
-		$result = [];
-
-		foreach($this->view['variables'] ?? [] as $name => $method)
-			$result[$name] = $model->$method();
-
-		return $result;
+		return $this->fieldsets;
 	}
 
 	public function getFetchers() : Collection
 	{
-		if(isset($this->fetchers))
+		if (isset($this->fetchers))
 			return $this->fetchers;
 
 		return collect();
-	}
-
-	public function getView()
-	{
-		if(! $this->hasView())
-			return false;
-
-		return $this->view['name'];
 	}
 
 	public function showLegend() : bool
@@ -200,19 +217,90 @@ class FormFieldset
 		return view($viewName, $resultingParameters)->render();
 	}
 
+	public function getView()
+	{
+		if (! $this->hasView())
+			return false;
+
+		return $this->view['name'];
+	}
+
+	public function hasView()
+	{
+		return isset($this->view);
+	}
+
+	public function getViewVariables() : array
+	{
+		// if((! isset($this->form))&&(! isset($this->form->model)))
+		// 	return [];
+
+		// $model = $this->form->model;
+
+		if (! ($model = $this->getModel()))
+			return [];
+
+		$result = [];
+
+		foreach ($this->view['variables'] ?? [] as $name => $method)
+			$result[$name] = $model->$method();
+
+		return $result;
+	}
+
+	public function getModel() : ?Model
+	{
+		if ($this->model ?? null)
+			return $this->model;
+
+		if ($model = $this->getForm()?->getModel())
+			return $model;
+
+		if ($model = $this->getParentFieldset()?->getModel())
+			return $model;
+
+		return null;
+	}
+
+	public function getForm() : ?Form
+	{
+		return $this->form;
+	}
+
+	public function setForm(Form $form = null)
+	{
+		$this->form = $form;
+	}
+
+	public function getParentFieldset() : ?Formfieldset
+	{
+		return $this->parentFieldset;
+	}
+
+	public function setParentFieldset(FormFieldset $formFieldset)
+	{
+		$this->parentFieldset = $formFieldset;
+	}
+
+	public function getViewParameters() : array
+	{
+		return $this->view['parameters'] ?? [];
+	}
+
 	public function hasCollapse()
 	{
 		return $this->collapse;
 	}
 
-	public function hasDivider()
+	public function getLegend()
 	{
-		return $this->divider;
-	}
+		if ($this->translatedLegend)
+			return $this->translatedLegend;
 
-	public function setDivider(bool $value = true)
-	{
-		$this->divider = $value;
+		if ($this->translateLegend())
+			return __($this->getTranslationPrefix() . '.' . $this->legend);
+
+		return $this->legend;
 	}
 
 	public function setLegend(string $legend)
@@ -222,14 +310,14 @@ class FormFieldset
 
 	public function translateLegend()
 	{
-		if($this->translatedLegend)
+		if ($this->translatedLegend)
 			return $this->translatedLegend;
 
-		if($this->translateLegend !== null)
+		if ($this->translateLegend !== null)
 			return $this->translateLegend;
 
-		if(! $this->form)
-			return ;
+		if (! $this->form)
+			return;
 
 		return $this->form->translateLegend();
 	}
@@ -239,47 +327,16 @@ class FormFieldset
 		return $this->translationPrefix ?? 'fieldsets';
 	}
 
-	public function getLegend()
-	{
-		if($this->translatedLegend)
-			return $this->translatedLegend;
-
-		if($this->translateLegend())
-			return __($this->getTranslationPrefix() . '.' . $this->legend);
-
-		return $this->legend;
-	}
-
-	public function setWidth($width)
-	{
-		$this->width = $width;
-	}
-
-	public function addHtmlClasses(array $classes)
-	{
-		foreach($classes as $class)
-			$this->addClass($class);
-	}
-
-	public function addClass(string $class)
-	{
-		$this->htmlClasses[] = $class;		
-	}
-
-	public function addContainerHtmlClasses(array $classes)
-	{
-		foreach($classes as $class)
-			$this->addContainerClass($class);
-	}
-
-	public function addContainerClass(string $class)
-	{
-		$this->containerHtmlClasses[] = $class;
-	}
-
 	public function getHtmlClassesString()
 	{
 		return implode(" ", $this->getHtmlClasses());
+	}
+
+	public function getHtmlClasses()
+	{
+		return array_merge([
+			'fieldset' . $this->name
+		], $this->htmlClasses);
 	}
 
 	public function getLegendHtmlClassesString()
@@ -287,92 +344,14 @@ class FormFieldset
 		return implode(" ", $this->getLegendHtmlClasses());
 	}
 
-	public function getBodyHtmlClassesString()
-	{
-		return implode(" ", $this->getBodyHtmlClasses());		
-	}
-
-	private function manageParameters(array $parameters)
-	{
-		if($width = ($parameters['width'] ?? false))
-			$this->setWidth($width);
-
-		if($classes = ($parameters['classes'] ?? false))
-			$this->addHtmlClasses($classes);
-
-		if($containerClasses = ($parameters['containerClasses'] ?? false))
-			$this->addContainerHtmlClasses($containerClasses);
-
-		if($columns = ($parameters['columns'] ?? false))
-			$this->setFieldsColumns($columns);
-
-		foreach($parameters as $key => $value)
-			$this->$key = $value;
-	}
-
-	public function getFieldsDefaultParameters() : array
-	{
-		$result = [];
-
-		if($this->translationPrefix)
-			$result['translationPrefix'] = $this->translationPrefix;
-
-		return $result;
-	}
-
-	public function addFormField(FormField $formField)
-	{
-		$formField->form = $this->form;
-		$formField->setFieldset($this);
-
-		$this->fields->push($formField);
-
-		return $this;
-	}
-
-	public function getFields() : Collection
-	{
-		return $this->fields;
-	}
-
-	public function getColumns()
-	{
-		return $this->columns;
-	}
-
-	public function getColumnsClass()
-	{
-		if(is_int($columns = $this->getColumns()))
-			return "uk-child-width-1-{$columns}@m";
-
-		if(! is_array($columns))
-			throw new \Exception('Valore di colonne non ammesso. Usare "columns" intero o array es. ["2@m", "4@l"]');
-
-		$pieces = [];
-
-		foreach($columns as $column)
-			$pieces[] = "uk-child-width-1-{$column}";
-
-		return implode(" ", $pieces);
-	}
-
-	public function setFieldsColumns($columns)
-	{
-		$this->columns = $columns;
-	}
-
-	public function getHtmlClasses()
-	{
-		return array_merge([
-			'fieldset' . $this->name
-			],
-			$this->htmlClasses
-		);
-	}
-
 	public function getLegendHtmlClasses() : array
 	{
 		return $this->legendHtmlClasses;
+	}
+
+	public function getBodyHtmlClassesString()
+	{
+		return implode(" ", $this->getBodyHtmlClasses());
 	}
 
 	public function getBodyHtmlClasses() : array
@@ -380,14 +359,55 @@ class FormFieldset
 		return $this->bodyHtmlClasses;
 	}
 
+	public function getFieldsDefaultParameters() : array
+	{
+		$result = [];
+
+		if ($this->translationPrefix)
+			$result['translationPrefix'] = $this->translationPrefix;
+
+		return $result;
+	}
+
+	public function getColumnsClass()
+	{
+		if (is_int($columns = $this->getColumns()))
+			return "uk-child-width-1-{$columns}@m";
+
+		if (! is_array($columns))
+			throw new Exception('Valore di colonne non ammesso. Usare "columns" intero o array es. ["2@m", "4@l"]');
+
+		$pieces = [];
+
+		foreach ($columns as $column)
+			$pieces[] = "uk-child-width-1-{$column}";
+
+		return implode(" ", $pieces);
+	}
+
+	public function getColumns()
+	{
+		return $this->columns;
+	}
+
 	public function getContainerHtmlAttributesString() : string
 	{
 		return implode(" ", $this->getContainerHtmlAttributes());
 	}
 
+	public function getContainerHtmlAttributes() : array
+	{
+		return $this->containerHtmlAttributes;
+	}
+
 	public function getHtmlAttributesString() : string
 	{
-		return implode(" ", $this->getHtmlAttributes());		
+		return implode(" ", $this->getHtmlAttributes());
+	}
+
+	public function getHtmlAttributes() : array
+	{
+		return $this->htmlAttributes;
 	}
 
 	public function getGridSizeHtmlClass() : string
@@ -400,32 +420,22 @@ class FormFieldset
 		return implode(" ", $this->getContainerHtmlClasses());
 	}
 
-	public function getContainerHtmlAttributes() : array
-	{
-		return $this->containerHtmlAttributes;
-	}
-
-	public function getHtmlAttributes() : array
-	{
-		return $this->htmlAttributes;
-	}
-
 	public function getContainerHtmlClasses() : array
 	{
-		if(is_int($width = $this->width))
+		if (is_int($width = $this->width))
 			$this->containerHtmlClasses[] = 'uk-width-1-' . $width . '@m';
 
-		else if(! is_array($width))
-			throw new \Exception('Valore di width non ammesso. Usare "width" intero o array es. ["2@m", "4@l"]');
+		else if (! is_array($width))
+			throw new Exception('Valore di width non ammesso. Usare "width" intero o array es. ["2@m", "4@l"]');
 
 		else
 		{
 			$pieces = [];
 
-			foreach($width as $_width)
+			foreach ($width as $_width)
 				$pieces[] = "uk-width-{$_width}";
 
-			$this->containerHtmlClasses[] = implode(" ", $pieces);	
+			$this->containerHtmlClasses[] = implode(" ", $pieces);
 		}
 
 		$this->containerHtmlClasses[] = 'fieldset-container-' . $this->name;
@@ -435,10 +445,10 @@ class FormFieldset
 
 	public function getDescription() : ? string
 	{
-		if(! $this->description)
+		if (! $this->description)
 			return null;
 
-		if($this->descriptionText)
+		if ($this->descriptionText)
 			return $this->descriptionText;
 
 		return __('fieldsets.' . $this->legend . 'Description');
@@ -446,39 +456,12 @@ class FormFieldset
 
 	public function addFormFieldToFieldset(FormField $formField, string $fieldset)
 	{
-		if(! $this->fieldsets[$fieldset])
+		if (! $this->fieldsets[$fieldset])
 			$this->addFormFieldset($fieldset);
 
 		$this->fieldsets[$fieldset]->addFormField($formField);
 
 		$formField->setForm($this->form);
-	}
-
-	static function createByNameAndParameters(string $name, array $parameters)
-	{
-		return new static($name, null, $parameters);
-	}
-
-	public function addFieldset(FormFieldset $formFieldset)
-	{
-		$this->fieldsets->push($formFieldset);
-
-		$formFieldset->setParentFieldset($this);
-	}
-
-	public function getFieldsets() : Collection
-	{
-		return $this->fieldsets;
-	}
-
-	public function setParentFieldset(FormFieldset $formFieldset)
-	{
-		$this->parentFieldset = $formFieldset;
-	}
-
-	public function getParentFieldset() : ? Formfieldset
-	{
-		return $this->parentFieldset;
 	}
 
 	public function addFormFieldset(string $name, array $parameters = [])
@@ -491,7 +474,34 @@ class FormFieldset
 		return $fieldset;
 	}
 
-	public function renderShow()
+	public function setDivider(bool $value = true)
+	{
+		$this->divider = $value;
+	}
+
+	public function hasDivider()
+	{
+		return $this->divider;
+	}
+
+	public function addFormField(FormField $formField)
+	{
+		$formField->form = $this->form;
+		$formField->setFieldset($this);
+
+		$this->fields->push($formField);
+
+		return $this;
+	}
+
+	public function addFieldset(FormFieldset $formFieldset)
+	{
+		$this->fieldsets->push($formFieldset);
+
+		$formFieldset->setParentFieldset($this);
+	}
+
+	public function renderShow() : View
 	{
 		return view("form::uikit.fieldsets.show", ['fieldset' => $this]);
 	}

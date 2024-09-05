@@ -6,7 +6,7 @@
         <fieldset class="{{ $fieldset->getUniqueId() }} {{ $fieldset->getHtmlClassesString() }}" data-name="{{ $fieldset->getUniqueId() }}" id="fieldset{{ $fieldset->getUniqueId() }}">
 
             @if($fieldset->showLegend())
-            <legend class="uk-legend {{ $fieldset->getLegendHtmlClassesString() }} @if(! $description = $fieldset->getDescription()) uk-margin-medium-bottom @endif">
+            <legend class="uk-legend {{ $fieldset->getLegendHtmlClassesString() }} @if(! $description = $fieldset->getDescription()) uk-margin-{{ $fieldset->getMarginSize() }}-bottom @endif">
                 <span>{!! $fieldset->getLegend() !!}</span>
                 <span class="toggler toggle{{ $fieldset->getUniqueId() }}" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-up"></span>
                 <span class="toggle{{ $fieldset->getUniqueId() }} uk-hidden" uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden" uk-icon="chevron-down"></span>

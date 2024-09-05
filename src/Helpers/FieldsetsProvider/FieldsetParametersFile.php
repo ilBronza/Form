@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FieldsetParametersFile
 {
+	public $parameters;
 	public $modelManager;
 
 	public function setModelManager(CrudModelManager $modelManager)
