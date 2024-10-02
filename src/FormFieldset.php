@@ -3,16 +3,20 @@
 namespace IlBronza\Form;
 
 use Exception;
+use IlBronza\Buttons\Button;
 use IlBronza\FormField\FormField;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+use function collect;
+
 class FormFieldset
 {
 	public ? Model $model;
 	public Collection $fetchers;
+	public Collection $buttons;
 	public $showLegend = true;
 	public $fields;
 	public $fieldsets;
@@ -70,6 +74,8 @@ class FormFieldset
 
 		$this->fields = collect();
 
+		$this->buttons = collect();
+
 		$this->manageParameters($parameters);
 		$this->setUniqueId($parameters['id'] ?? null);
 
@@ -89,6 +95,14 @@ class FormFieldset
 
 		if ($columns = ($parameters['columns'] ?? false))
 			$this->setFieldsColumns($columns);
+
+		if ($buttons = ($parameters['buttons'] ?? []))
+		{
+			$this->addButtons($buttons);
+			unset($parameters['buttons']);
+		}
+
+		unset($parameters['buttons']);
 
 		foreach ($parameters as $key => $value)
 			$this->$key = $value;
@@ -196,6 +210,25 @@ class FormFieldset
 	{
 		if (isset($this->fetchers))
 			return $this->fetchers;
+
+		return collect();
+	}
+
+	public function addButtons(Collection|array $buttons)
+	{
+		foreach($buttons as $button)
+			$this->addButton($button);
+	}
+
+	public function addButton(Button $button)
+	{
+		$this->buttons->push($button);
+	}
+
+	public function getButtons() : Collection
+	{
+		if (isset($this->buttons))
+			return $this->buttons;
 
 		return collect();
 	}

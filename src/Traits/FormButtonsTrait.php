@@ -15,14 +15,18 @@ trait FormButtonsTrait
 		return $this->hasSubmitButton;
 	}
 
-	public function setHasSubmitButton(bool $hasSubmitButton = true)
+	public function setHasSubmitButton(bool $hasSubmitButton = true) : self
 	{
 		$this->hasSubmitButton = $hasSubmitButton;
+
+		return $this;
 	}
 
-	public function setCancelButton(bool $hasCancelButton)
+	public function setCancelButton(bool $hasCancelButton) : self
 	{
 		$this->cancelButton = $hasCancelButton;
+
+		return $this;
 	}
 
 	public function hasCancelButton()
@@ -83,6 +87,8 @@ trait FormButtonsTrait
 	public function addClosureButton(Button $button)
 	{
 		$this->closureButtons->push($button);
+
+		$button->setForm($this);
 	}
 
 	public function addSaveAndNewButton()

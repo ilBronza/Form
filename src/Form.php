@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use \IlBronza\FormField\FormField;
 
+use function PHPUnit\Framework\isNull;
+
 class Form
 {
 	use FormButtonsTrait;
@@ -24,6 +26,8 @@ class Form
 	public Collection $fetchers;
 
 	public string $displayMode = 'form';
+
+	public ? bool $hasClosureButtons = null;
 
 	static $availableExtraViewsPositions = [
 		'outherTop',
@@ -68,8 +72,18 @@ class Form
 		return config('form.updateEditor', false);
 	}
 
+	public function setHasClosureButtons(bool $hasClosureButtons) : self
+	{
+		$this->hasClosureButtons = $hasClosureButtons;
+
+		return $this;
+	}
+
 	public function hasClosureButtons() : bool
 	{
+		if(! is_null($this->hasClosureButtons))
+			return $this->hasClosureButtons;
+
 		if(! $this->isInFormDisplayMode())
 			return false;
 

@@ -16,46 +16,47 @@
 						  uk-icon="chevron-down"></span>
 				</legend>
 
-			<div class="toggle toggle{{ $fieldset->getUniqueId() }}">
-				@endif
+				<div class="toggle toggle{{ $fieldset->getUniqueId() }}">
+					@endif
 
-				@if($description ?? ($description = $fieldset->getDescription()))
-					<div class="uk-margin-medium-bottom">
-						{!! $description !!}
+					@if($description ?? ($description = $fieldset->getDescription()))
+						<div class="uk-margin-medium-bottom">
+							{!! $description !!}
+						</div>
+					@endif
+
+					@if($fieldset->getView())
+						<div {{ $fieldset->getHtmlAttributesString() }}>
+							{!! $fieldset->renderView() !!}
+						</div>
+					@endif
+
+					@foreach($fieldset->getFetchers() as $fetcher)
+						{!! $fetcher->render() !!}
+					@endforeach
+
+					@foreach($fieldset->getButtons() as $button)
+						{!! $button->render() !!}
+					@endforeach
+
+					<div>
+						<div {{ $fieldset->getHtmlAttributesString() }} uk-grid
+							 class="{{ $fieldset->getGridSizeHtmlClass() }} {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
+							@include('form::uikit.fields.show', ['fields' => $fieldset->fields])
+						</div>
 					</div>
-				@endif
 
-				@if($fieldset->getView())
-					<div {{ $fieldset->getHtmlAttributesString() }}>
-						{!! $fieldset->renderView() !!}
-					</div>
-				@endif
+					@if(count($fieldset->fieldsets))
+						<div uk-grid uk-height-match class="uk-grid-divider {{ $fieldset->getGridSizeHtmlClass() }}">
+							@foreach($fieldset->fieldsets as $fieldset)
+								@include('form::uikit.fieldsets.show')
+							@endforeach
+						</div>
+					@endif
 
-				@foreach($fieldset->getFetchers() as $fetcher)
-					{{--                        <div {{ $fieldset->getHtmlAttributesString() }}>--}}
-					{!! $fetcher->render() !!}
-					{{--                        </div>--}}
-				@endforeach
-
-
-				<div>
-					<div {{ $fieldset->getHtmlAttributesString() }} uk-grid
-						 class="{{ $fieldset->getGridSizeHtmlClass() }} {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
-						@include('form::uikit.fields.show', ['fields' => $fieldset->fields])
-					</div>
+					@if($fieldset->showLegend())
 				</div>
-
-				@if(count($fieldset->fieldsets))
-					<div uk-grid uk-height-match class="uk-grid-divider {{ $fieldset->getGridSizeHtmlClass() }}">
-						@foreach($fieldset->fieldsets as $fieldset)
-							@include('form::uikit.fieldsets.show')
-						@endforeach
-					</div>
-				@endif
-
-				@if($fieldset->showLegend())
-			</div>
-				@endif
+			@endif
 
 		</fieldset>
 
