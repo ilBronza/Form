@@ -9,5 +9,8 @@ return [
 	'createCardClasses' => [
 	],
 	'editCardClasses' => [
-	]
+	],
+	'collapse' => true,
+	'collapseColumn' => true,
+	'collapseFalse' => true,
 ];

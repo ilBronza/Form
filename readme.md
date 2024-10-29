@@ -90,9 +90,34 @@ $ composer require ilbronza/form
         ]
     ];    
 
-
 ```
 
+### Add field inside existing fieldset
+
+```
+//ad single field in 3rd position of maindata fieldset
+        
+$fieldsToAdd = [
+    'event' => ['text' => 'string|required|max:128']
+];
+           
+$currentFields = $result['mainData']['fields']; 
+        
+$result['mainData']['fields'] = static::insertFieldsInPosition(
+    $fieldsToAdd,
+    $currentFields,
+    3
+);
+
+//condensed 
+
+$result['mainData']['fields'] = static::insertFieldsInPosition(
+    ['event' => ['text' => 'string|required|max:128']],
+    $result['mainData']['fields'],
+    3
+);
+		
+```
 
 ## Change log
 

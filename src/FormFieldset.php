@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 use function collect;
+use function config;
+use function implode;
 
 class FormFieldset
 {
@@ -53,7 +55,10 @@ class FormFieldset
 
 	public $gridSizeHtmlClass = 'uk-grid-small';
 
-	public $collapse = true;
+	public ? bool $collapse;
+	public ? bool $collapseRow;
+	public ? bool $collapseColumn;
+
 	public $divider = false;
 	public $uniqueId;
 
@@ -320,9 +325,45 @@ class FormFieldset
 		return $this->view['parameters'] ?? [];
 	}
 
+	public function getCollapseDividerString() : string
+	{
+		$pieces = [];
+
+		if(($this->hasCollapse())||($this->hasCollapseColumn() && $this->hasCollapseRow()))
+			$pieces = ['uk-grid-collapse'];
+		else if($this->hasCollapseColumn())
+			$pieces = ['uk-grid-column-collapse'];
+		else if($this->hasCollapseRow())
+			$pieces = ['uk-grid-row-collapse'];
+
+		if($this->hasDivider())
+			$pieces = ['uk-grid-divider'];
+
+		return implode(" ", $pieces);
+	}
+
 	public function hasCollapse()
 	{
-		return $this->collapse;
+		if(isset($this->collapse))
+			return $this->collapse;
+
+		return config('form.collapse', true);
+	}
+
+	public function hasCollapseRow()
+	{
+		if(isset($this->collapseRow))
+			return $this->collapseRow;
+
+		return config('form.collapseRow', true);
+	}
+
+	public function hasCollapseColumn()
+	{
+		if(isset($this->collapseColumn))
+			return $this->collapseColumn;
+
+		return config('form.collapseColumn', true);
 	}
 
 	public function getLegend()

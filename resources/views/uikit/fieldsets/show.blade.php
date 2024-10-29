@@ -41,7 +41,7 @@
 
 					<div>
 						<div {{ $fieldset->getHtmlAttributesString() }} uk-grid
-							 class="{{ $fieldset->getGridSizeHtmlClass() }} {{ $fieldset->getColumnsClass() }} @if($fieldset->hasCollapse()) uk-grid-collapse @if($fieldset->hasDivider()) uk-grid-divider @endif @endif">
+							 class="{{ $fieldset->getGridSizeHtmlClass() }} {{ $fieldset->getColumnsClass() }} {{ $fieldset->getCollapseDividerString() }}">
 							@include('form::uikit.fields.show', ['fields' => $fieldset->fields])
 						</div>
 					</div>

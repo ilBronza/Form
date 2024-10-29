@@ -5,6 +5,9 @@ namespace IlBronza\Form\Helpers\FieldsetsProvider;
 use IlBronza\CRUD\Helpers\ModelManagers\CrudModelManager;
 use Illuminate\Database\Eloquent\Model;
 
+use function array_slice;
+use function count;
+
 class FieldsetParametersFile
 {
 	public $parameters;
@@ -241,5 +244,13 @@ class FieldsetParametersFile
 		$file->setParameters($parameters);
 
 		return $file;
+	}
+
+	static function insertFieldsInPosition(array $newFields, array $existingFields, $position)
+	{
+		$firstPart = array_slice($existingFields, 0, $position, true);
+		$lastPart = array_slice($existingFields, $position, count($existingFields) - $position, true);
+
+		return $firstPart + $newFields + $lastPart;
 	}
 }

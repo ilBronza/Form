@@ -25,6 +25,8 @@ class Form
 	public $extraViews;
 	public Collection $fetchers;
 
+	public ? bool $hasShowLink = false;
+
 	public string $displayMode = 'form';
 
 	public ? bool $hasClosureButtons = null;
@@ -409,6 +411,11 @@ class Form
 	public function setBackToListUrl(string $url)
 	{
 		$this->backToListUrl = $url;
+	}
+
+	public function hasShowLink() : bool
+	{
+		return !! $this->hasShowLink;
 	}
 
 	public function getShowElementUrl()
