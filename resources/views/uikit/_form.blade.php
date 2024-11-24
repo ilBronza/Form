@@ -1,145 +1,147 @@
-
 @if(isset($extraViews))
-    <span class="uk-display-block uk-text-danger uk-h3">USE NEW EXTRA VIEWS SYSTEM</span>
-    <span class="uk-display-block uk-text-danger uk-h3">Se alcune informazioni non sono visibili, contattare assistenza. <pre>{{ json_encode($extraViews) }}</pre></span>
+	<span class="uk-display-block uk-text-danger uk-h3">USE NEW EXTRA VIEWS SYSTEM</span>
+	<span class="uk-display-block uk-text-danger uk-h3">Se alcune informazioni non sono visibili, contattare assistenza. <pre>{{ json_encode($extraViews) }}</pre></span>
 @endif
 
 @if(isset($buttons))
-    <nav class="uk-navbar-container" uk-navbar>
-        <div class="uk-navbar-left">
-            <ul class="uk-navbar-nav">
-                @isset($backToListUrl)
-                <li><a href="{{ $backToListUrl }}">@lang('crud::crud.backToList')</a></li>
-                @endisset
+	<nav class="uk-navbar-container" uk-navbar>
+		<div class="uk-navbar-left">
+			<ul class="uk-navbar-nav">
+				@isset($backToListUrl)
+					<li><a href="{{ $backToListUrl }}">@lang('crud::crud.backToList')</a></li>
+				@endisset
 
-                @foreach($buttons as $button)
-                    @if($button)
-                        <li>{!! $button->renderLink() !!}</li>
-                    @endif
-                @endforeach
-            </ul>
-        </div>
-    </nav>
+				@foreach($buttons as $button)
+					@if($button)
+						<li>{!! $button->renderLink() !!}</li>
+					@endif
+				@endforeach
+			</ul>
+		</div>
+	</nav>
 @endif
 
 
 @if($form->hasExtraViewsPositions('outherLeft', 'outherRight'))
-<div uk-grid>
+	<div uk-grid>
 
-    {!! $form->renderExtraViews('outherLeft') !!}
+		{!! $form->renderExtraViews('outherLeft') !!}
 
-    <div class="uk-width-expand">
-@endif
+		<div class="uk-width-expand">
+			@endif
 
-    {!! $form->renderExtraViews('outherTop') !!}
+			{!! $form->renderExtraViews('outherTop') !!}
 
-@if($form->isInFormDisplayMode())
-    @include('form::uikit._opening')
-@endif
+			@if($form->isInFormDisplayMode())
+				@include('form::uikit._opening')
+			@endif
 
-@if($form->hasExtraViewsPositions('right', 'left'))
-<div uk-grid>
+			@if($form->hasExtraViewsPositions('right', 'left'))
+				<div uk-grid>
 
-    {!! $form->renderExtraViews('left') !!}
+					{!! $form->renderExtraViews('left') !!}
 
-    <div class="uk-width-expand">
-@endif
+					<div class="uk-width-expand">
+						@endif
 
-	@if($form->hasCard())
+						@if($form->hasCard())
 
-    <div class="uk-card uk-card-default {{ implode(' ', $form->getCardClasses()) }}">
+							<div class="uk-card uk-card-default {{ implode(' ', $form->getCardClasses()) }}">
 
-        <div class="uk-card-header">
+								<div class="uk-card-header">
 
-            <div uk-grid>
-                
-                <div class="uk-h3 uk-display-block uk-width-expand">{!! $form->getTitle() !!}</div>
+									<div uk-grid>
 
-                @if($backUrl = $form->getBackToListUrl())
-                <div class="uk-width-auto uk-h5 uk-margin-large-right">
-                    <a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a>
-                </div>
-                @endif
+										@if($form->showTitle())
+											<div class="uk-h3 uk-display-block uk-width-expand">{!! $form->getTitle() !!}</div>
+										@endif
 
-                @if($form->hasButtonsNavbar())
-                    {!! $form->getButtonsNavbar()->render() !!}
+										@if($backUrl = $form->getBackToListUrl())
+											<div class="uk-width-auto uk-h5 uk-margin-large-right">
+												<a href="{{ $backUrl }}">@lang('crud::crud.backToList')</a>
+											</div>
+										@endif
 
-                @else
-                            @if($form->isInFormDisplayMode())
-                                        @if($showUrl = $form->getShowElementUrl())
-                                            <span class="uk-h5"><a href="{{ $showUrl }}">@lang('crud::crud.showElement', ['element' => $form->getModel()?->getName()])</a> </span>
-                                        @endif
-                            @else
-                                            @include('crud::utilities.editLink', ['element' => $form->getModel()])
-                            @endif
-                                
-                @endif
+										@if($form->hasButtonsNavbar())
+											{!! $form->getButtonsNavbar()->render() !!}
 
-            </div>
+										@else
+											@if($form->isInFormDisplayMode())
+												@if($showUrl = $form->getShowElementUrl())
+													<span class="uk-h5"><a
+																href="{{ $showUrl }}">@lang('crud::crud.showElement', ['element' => $form->getModel()?->getName()])</a> </span>
+												@endif
+											@else
+												@include('crud::utilities.editLink', ['element' => $form->getModel()])
+											@endif
 
-            @if($formIntro = $form->getIntro())
-            <div class="uk-margin-top">
-                {!! $formIntro !!}
-            </div>
-            @endif
+										@endif
 
-        </div>
+									</div>
 
-        <div class="uk-card-body">
+									@if($formIntro = $form->getIntro())
+										<div class="uk-margin-top">
+											{!! $formIntro !!}
+										</div>
+									@endif
 
-            {!! $form->renderExtraViews('innerTop') !!}
+								</div>
 
-            @include('form::uikit._content')
+								<div class="uk-card-body">
 
-            {!! $form->renderExtraViews('innerBottom') !!}
+									{!! $form->renderExtraViews('innerTop') !!}
 
-        </div>
-@if($form->hasClosureButtons())
-        <div class="uk-card-footer">
-            @include('form::uikit._closureButtons')
-        </div>
-@endif
-    </div>
+									@include('form::uikit._content')
 
-	@else
+									{!! $form->renderExtraViews('innerBottom') !!}
 
-        {!! $form->renderExtraViews('innerTop') !!}
-        @include('form::uikit._content')
-        {!! $form->renderExtraViews('innerBottom') !!}
+								</div>
+								@if($form->hasClosureButtons())
+									<div class="uk-card-footer">
+										@include('form::uikit._closureButtons')
+									</div>
+								@endif
+							</div>
 
-@if($form->hasClosureButtons())
-		@include('form::uikit._closureButtons')
-@endif
+						@else
 
-	@endif
+							{!! $form->renderExtraViews('innerTop') !!}
+							@include('form::uikit._content')
+							{!! $form->renderExtraViews('innerBottom') !!}
 
-@if($form->hasExtraViewsPositions('right', 'left'))
-    </div>
+							@if($form->hasClosureButtons())
+								@include('form::uikit._closureButtons')
+							@endif
 
-    {!! $form->renderExtraViews('right') !!}
+						@endif
 
-</div>
-@endif
+						@if($form->hasExtraViewsPositions('right', 'left'))
+					</div>
 
-@include('form::uikit._closure')
+					{!! $form->renderExtraViews('right') !!}
 
-@if($form->hasExtraViewsPositions('outherRight', 'outherLeft'))
+				</div>
+			@endif
 
-    </div>
+			@include('form::uikit._closure')
 
-    {!! $form->renderExtraViews('outherRight') !!}
+			@if($form->hasExtraViewsPositions('outherRight', 'outherLeft'))
 
-</div>
+		</div>
+
+		{!! $form->renderExtraViews('outherRight') !!}
+
+	</div>
 @endif
 
 {!! $form->renderExtraViews('outherBottom') !!}
 
 @if (isset($errors)&&($errors->any()))
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+	<div class="alert alert-danger">
+		<ul>
+			@foreach ($errors->all() as $error)
+				<li>{{ $error }}</li>
+			@endforeach
+		</ul>
+	</div>
 @endif

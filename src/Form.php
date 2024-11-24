@@ -25,6 +25,23 @@ class Form
 	public $extraViews;
 	public Collection $fetchers;
 
+	public bool $showTitle = true;
+
+	public function showTitle() : bool
+	{
+		return $this->showTitle;
+	}
+
+	public function setShowTitle(bool $showTitle = true)
+	{
+		$this->showTitle = $showTitle;
+	}
+
+	public function setHideTitle()
+	{
+		$this->showTitle = false;
+	}
+
 	public ? bool $hasShowLink = false;
 
 	public string $displayMode = 'form';
