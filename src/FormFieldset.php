@@ -16,7 +16,7 @@ use function implode;
 
 class FormFieldset
 {
-	public ? Model $model;
+	public ?Model $model;
 	public Collection $fetchers;
 	public Collection $buttons;
 	public $showLegend = true;
@@ -39,36 +39,20 @@ class FormFieldset
 		'uk-margin-bottom',
 		'uk-fieldset'
 	];
-
-	public function getMarginSize() : string
-	{
-		if($form = $this->getForm())
-			return $form->getMarginSize();
-
-		return 'medium';
-	}
-
 	public $extraHtmlClasses = [];
-
 	public $legendHtmlClasses = [];
 	public $bodyHtmlClasses = [];
-
 	public $gridSizeHtmlClass = 'uk-grid-small';
-
-	public ? bool $collapse;
-	public ? bool $collapseRow;
-	public ? bool $collapseColumn;
-
+	public ?bool $collapse;
+	public ?bool $collapseRow;
+	public ?bool $collapseColumn;
 	public $divider = false;
 	public $uniqueId;
-
 	public $description;
 	public $descriptionText;
-
 	public $translateLegend = true;
 	public ?string $translatedLegend = null;
 	public ?string $translationPrefix = null;
-
 	public $visible = true;
 
 	public function __construct(string $name, Form $form = null, array $parameters = [])
@@ -87,30 +71,17 @@ class FormFieldset
 		$this->fieldsets = collect();
 	}
 
-	private function manageParameters(array $parameters)
+	static function createByNameAndParameters(string $name, array $parameters)
 	{
-		if ($width = ($parameters['width'] ?? false))
-			$this->setWidth($width);
+		return new static($name, null, $parameters);
+	}
 
-		if ($classes = ($parameters['classes'] ?? false))
-			$this->addHtmlClasses($classes);
+	public function getMarginSize() : string
+	{
+		if ($form = $this->getForm())
+			return $form->getMarginSize();
 
-		if ($containerClasses = ($parameters['containerClasses'] ?? false))
-			$this->addContainerHtmlClasses($containerClasses);
-
-		if ($columns = ($parameters['columns'] ?? false))
-			$this->setFieldsColumns($columns);
-
-		if ($buttons = ($parameters['buttons'] ?? []))
-		{
-			$this->addButtons($buttons);
-			unset($parameters['buttons']);
-		}
-
-		unset($parameters['buttons']);
-
-		foreach ($parameters as $key => $value)
-			$this->$key = $value;
+		return 'medium';
 	}
 
 	public function setWidth($width)
@@ -143,11 +114,6 @@ class FormFieldset
 	public function setFieldsColumns($columns)
 	{
 		$this->columns = $columns;
-	}
-
-	static function createByNameAndParameters(string $name, array $parameters)
-	{
-		return new static($name, null, $parameters);
 	}
 
 	public function setVisibility(bool $visible)
@@ -221,7 +187,7 @@ class FormFieldset
 
 	public function addButtons(Collection|array $buttons)
 	{
-		foreach($buttons as $button)
+		foreach ($buttons as $button)
 			$this->addButton($button);
 	}
 
@@ -302,7 +268,10 @@ class FormFieldset
 
 	public function getForm() : ?Form
 	{
-		return $this->form;
+		if($this->form)
+			return $this->form;
+
+		return $this->getParentFieldset()?->getForm();
 	}
 
 	public function setForm(Form $form = null)
@@ -329,14 +298,14 @@ class FormFieldset
 	{
 		$pieces = [];
 
-		if(($this->hasCollapse())||($this->hasCollapseColumn() && $this->hasCollapseRow()))
+		if (($this->hasCollapse()) || ($this->hasCollapseColumn() && $this->hasCollapseRow()))
 			$pieces = ['uk-grid-collapse'];
-		else if($this->hasCollapseColumn())
+		else if ($this->hasCollapseColumn())
 			$pieces = ['uk-grid-column-collapse'];
-		else if($this->hasCollapseRow())
+		else if ($this->hasCollapseRow())
 			$pieces = ['uk-grid-row-collapse'];
 
-		if($this->hasDivider())
+		if ($this->hasDivider())
 			$pieces = ['uk-grid-divider'];
 
 		return implode(" ", $pieces);
@@ -344,7 +313,7 @@ class FormFieldset
 
 	public function hasCollapse()
 	{
-		if(isset($this->collapse))
+		if (isset($this->collapse))
 			return $this->collapse;
 
 		return config('form.collapse', true);
@@ -352,7 +321,7 @@ class FormFieldset
 
 	public function hasCollapseRow()
 	{
-		if(isset($this->collapseRow))
+		if (isset($this->collapseRow))
 			return $this->collapseRow;
 
 		return config('form.collapseRow', true);
@@ -360,7 +329,7 @@ class FormFieldset
 
 	public function hasCollapseColumn()
 	{
-		if(isset($this->collapseColumn))
+		if (isset($this->collapseColumn))
 			return $this->collapseColumn;
 
 		return config('form.collapseColumn', true);
@@ -517,7 +486,7 @@ class FormFieldset
 		return $this->containerHtmlClasses;
 	}
 
-	public function getDescription() : ? string
+	public function getDescription() : ?string
 	{
 		if (! $this->description)
 			return null;
@@ -578,6 +547,32 @@ class FormFieldset
 	public function renderShow() : View
 	{
 		return view("form::uikit.fieldsets.show", ['fieldset' => $this]);
+	}
+
+	private function manageParameters(array $parameters)
+	{
+		if ($width = ($parameters['width'] ?? false))
+			$this->setWidth($width);
+
+		if ($classes = ($parameters['classes'] ?? false))
+			$this->addHtmlClasses($classes);
+
+		if ($containerClasses = ($parameters['containerClasses'] ?? false))
+			$this->addContainerHtmlClasses($containerClasses);
+
+		if ($columns = ($parameters['columns'] ?? false))
+			$this->setFieldsColumns($columns);
+
+		if ($buttons = ($parameters['buttons'] ?? []))
+		{
+			$this->addButtons($buttons);
+			unset($parameters['buttons']);
+		}
+
+		unset($parameters['buttons']);
+
+		foreach ($parameters as $key => $value)
+			$this->$key = $value;
 	}
 
 }
