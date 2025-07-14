@@ -129,7 +129,7 @@ class Form
 	public $card = false;
 	public $cardClasses = [];
 
-	public $fieldsets;
+	public Collection $fieldsets;
 	public $fields;
 
 	public $htmlClasses = [];
@@ -494,6 +494,14 @@ class Form
 			$field->$name = $value;
 
 		return $field;
+	}
+
+	public function getFieldsets() : Collection
+	{
+		if(isset($this->fieldsets))
+			return $this->fieldsets;
+
+		return collect();
 	}
 
 	public function getFieldByName(string $name)

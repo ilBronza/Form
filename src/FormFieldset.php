@@ -527,6 +527,14 @@ class FormFieldset
 		return $this->divider;
 	}
 
+	public function setFields(Collection $fields)
+	{
+		$this->fields = collect();
+
+		foreach ($fields as $field)
+			$this->addFormField($field);
+	}
+
 	public function addFormField(FormField $formField)
 	{
 		$formField->form = $this->form;
