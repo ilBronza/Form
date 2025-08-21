@@ -2,6 +2,7 @@
 
 namespace IlBronza\Form;
 
+use IlBronza\CRUD\Traits\IlBronzaPackages\CRUDDisplayHtmlClassesTrait;
 use IlBronza\CRUD\Traits\IlBronzaPackages\CRUDExtraButtonsTrait;
 use IlBronza\Form\FormFieldset;
 use IlBronza\Form\Traits\ExtraViewsTrait;
@@ -17,6 +18,10 @@ use function PHPUnit\Framework\isNull;
 
 class Form
 {
+	use CRUDDisplayHtmlClassesTrait;
+	public array $htmlClasses = [];
+
+
 	use FormButtonsTrait;
 
 	use ExtraViewsTrait;
@@ -132,13 +137,11 @@ class Form
 	public Collection $fieldsets;
 	public $fields;
 
-	public $htmlClasses = [];
 
 	public $mustShowLabel;
 	public $mustShowPlaceholder = true;
 
 	public $displayAsSwitcher = false;
-	public $orientation = 'uk-form-horizontal';
 	public $translateLegend = true;
 
 	public $closureAlignment = 'left';
@@ -163,6 +166,8 @@ class Form
 		$this->closureButtons = collect();
 
 		$this->fetchers = collect();
+
+		$this->setHorizontalForm();
 	}
 
 	public function getClosureAlignmentString() : string
@@ -213,21 +218,6 @@ class Form
 			return null;
 
 		return $this->intro;
-	}
-
-	public function addHtmlClass(string $htmlClass)
-	{
-		$this->htmlClasses[] = $htmlClass;
-	}
-
-	public function getHtmlClasses() : array
-	{
-		return $this->htmlClasses;
-	}
-
-	public function getFormHtmlClassesString() : string
-	{
-		return implode(" ", $this->getHtmlClasses());
 	}
 
 	public function addCardClasses(array $classes = [])
@@ -446,28 +436,19 @@ class Form
 		$this->showElementUrl = $url;
 	}
 
-	public function getFormOrientationClass()
-	{
-		return $this->orientation;
-	}
-
 	public function setHorizontalForm() : static
 	{
-		$this->orientation = 'uk-form-horizontal';
-
-		return $this;
+		return $this->replaceHtmlClass('uk-form-stacked', 'uk-form-horizontal');
 	}
 
 	public function setVerticalForm() : static
 	{
-		$this->orientation = 'uk-form-stacked';
-
-		return $this;
+		return $this->replaceHtmlClass( 'uk-form-horizontal', 'uk-form-stacked',);
 	}
 
-	public function setStackedForm()
+	public function setStackedForm() : static
 	{
-		$this->orientation = 'uk-form-stacked';
+		return $this->setVerticalForm();
 	}
 
 	public function mustShowLabel(bool $mustShowLabel = null)

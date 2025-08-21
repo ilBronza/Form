@@ -9,7 +9,7 @@
 	enctype="multipart/form-data" 
 	@endif
 
-	class="uk-form {{ $form->getFormOrientationClass() }} {{ $form->getFormHtmlClassesString() }}"
+	class="uk-form {{ $form->getHtmlClassesString() }}"
 >
 
 	@if(! in_array($method = $form->getMethod(), ['GET', 'POST']) )

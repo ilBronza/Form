@@ -76,7 +76,7 @@ trait FormButtonsTrait
 
 	public function getSubmitButtonText()
 	{
-		return $this->submitButtonText ?? __('forms.save');
+		return $this->submitButtonText ?? __('form::form.save');
 	}
 
 	public function getClosureButtons()
