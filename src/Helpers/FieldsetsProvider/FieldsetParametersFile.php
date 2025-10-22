@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use function array_slice;
 use function count;
+use function dd;
 
 class FieldsetParametersFile
 {
@@ -18,14 +19,14 @@ class FieldsetParametersFile
 		$this->modelManager = $modelManager;
 	}
 
-	public function getModelManager() : CrudModelManager
+	public function getModelManager() : ? CrudModelManager
 	{
 		return $this->modelManager;
 	}
 
-	public function getModel() : Model
+	public function getModel() : ? Model
 	{
-		return $this->getModelManager()->getModel();
+		return $this->getModelManager()?->getModel();
 	}
 
 	// public function getShowFieldsetsArray() : array
