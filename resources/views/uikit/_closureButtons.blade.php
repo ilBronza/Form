@@ -1,7 +1,6 @@
 <div class="uk-text-{{ $form->getClosureAlignmentString() }} uk-margin-top ibform-closure-buttons">
 	<div id="recaptcha"></div>
-	<br />
-	
+
 	@if($form->hasSubmitButton())
 	<div class="submitcontainer uk-float-left">
 	<input 
