@@ -18,7 +18,21 @@
 		type="submit"
 		name="save"
 		value="{{ $form->getSubmitButtonText() }}"
-		></div>
+		>
+
+		@if($form->hasSaveAndRefreshButton())
+		<input 
+
+			class="{{ $form->getSubmitButtonHtmlClasses() }}"
+			type="submit"
+			name="save_and_refresh"
+			value="{{ $form->getSaveAndRefreshButtonText() }}"
+			>
+
+		@endif
+
+	</div>
+
 
 	@endif
 

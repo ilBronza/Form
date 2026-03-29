@@ -7,12 +7,21 @@ use IlBronza\Buttons\Button;
 trait FormButtonsTrait
 {
 	public $hasSubmitButton = true;
+	public $hasSaveAndRefreshButton = true;
+
+	public ? string $saveAndRefreshButtonText = null;
+
 
 	public function setDefaultNavbarButtons() { }
 
 	public function hasSubmitButton()
 	{
 		return $this->hasSubmitButton;
+	}
+
+	public function hasSaveAndRefreshButton() : bool
+	{
+		return $this->hasSaveAndRefreshButton;
 	}
 
 	public function setHasSubmitButton(bool $hasSubmitButton = true) : self
@@ -77,6 +86,11 @@ trait FormButtonsTrait
 	public function getSubmitButtonText()
 	{
 		return $this->submitButtonText ?? __('form::form.save');
+	}
+
+	public function getSaveAndRefreshButtonText() : string
+	{
+		return $this->saveAndRefreshButtonText ?? __('form::form.saveAndRefresh');
 	}
 
 	public function getClosureButtons()

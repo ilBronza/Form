@@ -34,7 +34,6 @@ class FieldsetsProvider
 		$fieldsetProvider = new static();
 
 		$fieldsetProvider->setModel($model);
-
 		$fieldsetProvider->setParametersByFile($file);
 
 		return $fieldsetProvider;

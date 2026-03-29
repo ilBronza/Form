@@ -155,6 +155,9 @@ class FieldsetParametersFile
 
 	static function sanitizeRules(array $parameters) : array
 	{
+		if(! isset($parameters['rules']))
+			throw new \Exception('Non è settato \'rules\': ' . json_encode($parameters));
+
 		if(is_string($parameters['rules']))
 			$parameters = static::buildParametersRulesFromString($parameters);
 
@@ -189,7 +192,14 @@ class FieldsetParametersFile
 			if(count($fieldParameters) == 1)
 				$fieldParameters = static::getFieldParametersFromString($fieldParameters);
 
-			$fieldParameters = static::sanitizeRules($fieldParameters);
+			try
+			{
+				$fieldParameters = static::sanitizeRules($fieldParameters);
+			}
+			catch(\Exception $e)
+			{
+				throw new \Exception($e->getMessage() . ' su campo ' . $fieldName);
+			}
 
 			$fieldsetParameters['fields'][$fieldName] = static::buildNameAndLabelArray($fieldName, $fieldParameters);
 		}

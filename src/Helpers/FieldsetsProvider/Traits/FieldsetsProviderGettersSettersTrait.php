@@ -57,7 +57,14 @@ trait FieldsetsProviderGettersSettersTrait
 
 	public function getParametersByFile(FieldsetParametersFile $file) : array
 	{
-		return $file->getFieldsetsParameters();
+		try
+		{
+			return $file->getFieldsetsParameters();			
+		}
+		catch(\Exception $e)
+		{
+			throw new \Exception($e->getMessage() . ' sul file ' . get_class($file));
+		}
 	}
 
 	public function getAllFieldsByParameters(string $name, array $givenParameters) : array
