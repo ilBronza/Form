@@ -7,7 +7,7 @@ use IlBronza\Buttons\Button;
 trait FormButtonsTrait
 {
 	public $hasSubmitButton = true;
-	public $hasSaveAndRefreshButton = true;
+	public $hasSaveAndRefreshButton = false;
 
 	public ? string $saveAndRefreshButtonText = null;
 

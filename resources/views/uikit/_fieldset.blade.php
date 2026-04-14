@@ -45,13 +45,36 @@
 						</div>
 					</div>
 
-					@if(count($fieldset->fieldsets))
-						<div uk-grid
-							 class="uk-padding-small {{ $fieldset->getGridSizeHtmlClass() }} @if($fieldset->hasDivider()) uk-grid-divider @endif">
-							@foreach($fieldset->fieldsets as $fieldset)
-								@include('form::uikit._fieldset')
-							@endforeach
-						</div>
+					@if($fieldset->showFieldsetsAsSwitcher ?? false)
+						@if(count($fieldset->fieldsets))
+							<div>
+								<ul class="uk-subnav uk-subnav-pill" uk-switcher>
+								@foreach($fieldset->fieldsets as $innerFieldset)
+									<li><a href="#">{!! $innerFieldset->getLegend() !!}</a></li>
+								@endforeach
+								</ul>
+
+								<div class="uk-switcher uk-margin">
+								@foreach($fieldset->fieldsets as $innerFieldset)
+									<div>
+										@include('form::uikit._fieldset', ['fieldset' => $innerFieldset])
+									</div>
+								@endforeach
+								</div>
+							</div>
+
+						@endif
+					@else
+
+						@if(count($fieldset->fieldsets))
+							<div uk-grid
+								 class="uk-padding-small {{ $fieldset->getGridSizeHtmlClass() }} @if($fieldset->hasDivider()) uk-grid-divider @endif">
+								@foreach($fieldset->fieldsets as $fieldset)
+									@include('form::uikit._fieldset')
+								@endforeach
+							</div>
+						@endif
+
 					@endif
 
 				</div>
