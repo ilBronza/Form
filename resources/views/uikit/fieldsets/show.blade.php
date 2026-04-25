@@ -26,7 +26,7 @@
 					@endif
 
 					@if($fieldset->getView())
-						<div {{ $fieldset->getHtmlAttributesString() }}>
+						<div {{ $fieldset->getHtmlAttributesString() }} class="view view{{ Str::slug($fieldset->getView()) }}">
 							{!! $fieldset->renderView() !!}
 						</div>
 					@endif

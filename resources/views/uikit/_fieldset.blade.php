@@ -9,12 +9,15 @@
 				@if($fieldset->showLegend())
 					<legend class="uk-legend {{ $fieldset->getLegendHtmlClassesString() }} @if(! $description = $fieldset->getDescription()) uk-margin-{{ $fieldset->getMarginSize() }}-bottom @endif">
 						<span>{!! $fieldset->getLegend() !!}</span>
+
+						@if($fieldset->canBeHidden())
 						<span class="toggler toggle{{ $fieldset->getUniqueId() }}"
 							  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 							  uk-icon="chevron-up"></span>
 						<span class="toggle{{ $fieldset->getUniqueId() }} uk-hidden"
 							  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 							  uk-icon="chevron-down"></span>
+						@endif
 					</legend>
 				@endif
 
@@ -27,8 +30,9 @@
 					@endif
 
 					@if($fieldset->getView())
-						<div {{ $fieldset->getHtmlAttributesString() }}>
+						<div {{ $fieldset->getHtmlAttributesString() }} class="view view{{ Str::slug($fieldset->getView()) }}">
 							{!! $fieldset->renderView() !!}
+
 						</div>
 					@endif
 

@@ -4,7 +4,7 @@ return [
 	'grid-size' => 'uk-grid-small',
 	'divider' => true,
 	'hasCard' => true,
-	'updateEditor' => false,
+	'updateEditor' => true,
 	'showIntro' => true,
 	'createCardClasses' => [
 	],

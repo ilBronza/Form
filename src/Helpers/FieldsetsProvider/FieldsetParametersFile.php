@@ -3,11 +3,9 @@
 namespace IlBronza\Form\Helpers\FieldsetsProvider;
 
 use IlBronza\CRUD\Helpers\ModelManagers\CrudModelManager;
+use IlBronza\Products\Models\Interfaces\SellableItemInterface;
+use IlBronza\Products\Providers\Helpers\Sellables\SellablePriceFormFieldsHelper;
 use Illuminate\Database\Eloquent\Model;
-
-use function array_slice;
-use function count;
-use function dd;
 
 class FieldsetParametersFile
 {
@@ -27,6 +25,22 @@ class FieldsetParametersFile
 	public function getModel() : ? Model
 	{
 		return $this->getModelManager()?->getModel();
+	}
+
+	static function addCostsFieldsetByModel(array $parameters, Model $model, $extraParameters)
+	{
+		if (! $model instanceof SellableItemInterface)
+			return $parameters;
+
+		$parameters['costs'] = [
+				'fields' => SellablePriceFormFieldsHelper::getFieldsByModel($model),
+				'width' => ["1-3@l", '1-2@m']
+			];
+
+		foreach($extraParameters as $name => $value)
+			$parameters['costs'][$name] = $value;
+
+		return $parameters;
 	}
 
 	// public function getShowFieldsetsArray() : array

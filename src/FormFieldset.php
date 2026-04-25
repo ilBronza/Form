@@ -43,9 +43,13 @@ class FormFieldset
 	public $legendHtmlClasses = [];
 	public $bodyHtmlClasses = [];
 	public $gridSizeHtmlClass = 'uk-grid-small';
+
 	public ?bool $collapse;
 	public ?bool $collapseRow;
 	public ?bool $collapseColumn;
+
+	public bool $canBeHidden = true;
+
 	public $divider = false;
 	public $uniqueId;
 	public $description;
@@ -82,6 +86,11 @@ class FormFieldset
 			return $form->getMarginSize();
 
 		return 'medium';
+	}
+
+	public function canBeHidden() : bool
+	{
+		return $this->canBeHidden;
 	}
 
 	public function setWidth($width)
