@@ -36,6 +36,10 @@
 						</div>
 					@endif
 
+					@foreach($fieldset->getFetchers() as $fetcher)
+						{!! $fetcher->render() !!}
+					@endforeach
+
 					@if($buttons = $fieldset->getButtons())
 						@foreach($buttons as $button)
 							{!! $button->render() !!}
