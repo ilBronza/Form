@@ -8,15 +8,17 @@
 			@if($fieldset->showLegend())
 				<legend class="uk-legend @if(! $description = $fieldset->getDescription()) uk-margin-medium-bottom @endif">
 					<span>{!! $fieldset->getLegend() !!}</span>
-					<span class="toggler toggle{{ $fieldset->getUniqueId() }}"
+					@if($fieldset->canBeHidden())
+					<span class="toggler toggle{{ $fieldset->getUniqueId() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif"
 						  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 						  uk-icon="chevron-up"></span>
-					<span class="toggle{{ $fieldset->getUniqueId() }} uk-hidden"
+					<span class="toggle{{ $fieldset->getUniqueId() }} @unless($fieldset->isCollapsedInitially()) uk-hidden @endunless"
 						  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 						  uk-icon="chevron-down"></span>
+					@endif
 				</legend>
 
-				<div class="toggle toggle{{ $fieldset->getUniqueId() }}">
+				<div class="toggle toggle{{ $fieldset->getUniqueId() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif">
 					@endif
 
 					@if($description ?? ($description = $fieldset->getDescription()))

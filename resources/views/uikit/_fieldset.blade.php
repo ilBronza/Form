@@ -11,17 +11,17 @@
 						<span>{!! $fieldset->getLegend() !!}</span>
 
 						@if($fieldset->canBeHidden())
-						<span class="toggler toggle{{ $fieldset->getUniqueId() }}"
+						<span class="toggler toggle{{ $fieldset->getUniqueId() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif"
 							  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 							  uk-icon="chevron-up"></span>
-						<span class="toggle{{ $fieldset->getUniqueId() }} uk-hidden"
+						<span class="toggle{{ $fieldset->getUniqueId() }} @unless($fieldset->isCollapsedInitially()) uk-hidden @endunless"
 							  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 							  uk-icon="chevron-down"></span>
 						@endif
 					</legend>
 				@endif
 
-				<div class="toggle toggle{{ $fieldset->getUniqueId() }} {{ $fieldset->getBodyHtmlClassesString() }}">
+				<div class="toggle toggle{{ $fieldset->getUniqueId() }} {{ $fieldset->getBodyHtmlClassesString() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif">
 
 					@if($description ?? false)
 						<div class="uk-margin-medium-bottom">
@@ -72,7 +72,7 @@
 
 						@if(count($fieldset->fieldsets))
 							<div uk-grid
-								 class="uk-padding-small {{ $fieldset->getGridSizeHtmlClass() }} @if($fieldset->hasDivider()) uk-grid-divider @endif">
+								 class="inner-fieldsets uk-padding-small {{ $fieldset->getGridSizeHtmlClass() }} @if($fieldset->hasDivider()) uk-grid-divider @endif">
 								@foreach($fieldset->fieldsets as $fieldset)
 									@include('form::uikit._fieldset')
 								@endforeach

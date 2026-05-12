@@ -27,7 +27,7 @@ trait FieldsetsProviderRolesTrait
 
 	protected function filterByRoles(array $fields) : array
 	{
-		if(($user = Auth::user())&&($user->hasRole('superadmin')))
+		if(($user = Auth::user())&&($user->isSuperadmin()))
 			return $fields;
 
 		foreach($fields as $key => $field)
@@ -46,7 +46,7 @@ trait FieldsetsProviderRolesTrait
 
 	protected function filterByPermissions(array $fields) : array
 	{
-		if(($user = Auth::user())&&($user->hasRole('superadmin')))
+		if(($user = Auth::user())&&($user->isSuperadmin()))
 			return $fields;
 
 		foreach($fields as $key => $field)

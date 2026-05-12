@@ -50,6 +50,12 @@ class FormFieldset
 
 	public bool $canBeHidden = true;
 
+	/**
+	 * When non-null, overrides config('form.fieldset_collapsed_by_default') for the accordion body (legend toggle).
+	 * Has no effect if the legend toggle is not shown ({@see canBeHidden()} / {@see showLegend()}).
+	 */
+	public ?bool $collapsedInitially = null;
+
 	public $divider = false;
 	public $uniqueId;
 	public $description;
@@ -91,6 +97,17 @@ class FormFieldset
 	public function canBeHidden() : bool
 	{
 		return $this->canBeHidden;
+	}
+
+	public function isCollapsedInitially() : bool
+	{
+		if (! $this->canBeHidden() || ! $this->showLegend())
+			return false;
+
+		if ($this->collapsedInitially !== null)
+			return $this->collapsedInitially;
+
+		return (bool) config('form.fieldset_collapsed_by_default', false);
 	}
 
 	public function setWidth($width)
