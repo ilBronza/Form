@@ -40,11 +40,13 @@
 						{!! $fetcher->render() !!}
 					@endforeach
 
+					<div class="fieldset-buttons">
 					@if($buttons = $fieldset->getButtons())
 						@foreach($buttons as $button)
 							{!! $button->render() !!}
 						@endforeach
 					@endif
+					</div>
 
 					<div>
 						<div {{ $fieldset->getHtmlAttributesString() }} uk-grid
