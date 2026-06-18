@@ -21,6 +21,25 @@
 	</nav>
 @endif
 
+@if (isset($errors)&&($errors->any()))
+	@php($errorsCount = count($errors->all()))
+
+	<script type="text/javascript">
+		jQuery(function()
+		{
+			window.addDangerNotification(@json(trans_choice('form::form.validationErrorsCount', $errorsCount, ['count' => $errorsCount])));
+		});
+	</script>
+
+	<div class="uk-alert-danger" uk-alert>
+		<ul class="uk-list uk-margin-remove">
+			@foreach ($errors->all() as $error)
+				<li>{{ $error }}</li>
+			@endforeach
+		</ul>
+	</div>
+@endif
+
 
 @if($form->hasExtraViewsPositions('outherLeft', 'outherRight'))
 	<div uk-grid>
@@ -135,13 +154,3 @@
 @endif
 
 {!! $form->renderExtraViews('outherBottom') !!}
-
-@if (isset($errors)&&($errors->any()))
-	<div class="alert alert-danger">
-		<ul>
-			@foreach ($errors->all() as $error)
-				<li>{{ $error }}</li>
-			@endforeach
-		</ul>
-	</div>
-@endif
