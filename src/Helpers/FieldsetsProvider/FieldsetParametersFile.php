@@ -2,6 +2,7 @@
 
 namespace IlBronza\Form\Helpers\FieldsetsProvider;
 
+use Auth;
 use IlBronza\CRUD\Helpers\ModelManagers\CrudModelManager;
 use IlBronza\Products\Models\Interfaces\SellableItemInterface;
 use IlBronza\Products\Providers\Helpers\Sellables\SellablePriceFormFieldsHelper;
@@ -30,6 +31,9 @@ class FieldsetParametersFile
 	static function addCostsFieldsetByModel(array $parameters, Model $model, $extraParameters)
 	{
 		if (! $model instanceof SellableItemInterface)
+			return $parameters;
+
+		if((! ($user = Auth::user())->hasRole('economics'))||(! $user->isSuperadmin()))
 			return $parameters;
 
 		$parameters['costs'] = [
