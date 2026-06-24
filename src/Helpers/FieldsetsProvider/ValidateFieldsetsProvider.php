@@ -3,6 +3,7 @@
 namespace IlBronza\Form\Helpers\FieldsetsProvider;
 
 use IlBronza\Form\Helpers\FieldsetsProvider\FieldsetParametersFile;
+use IlBronza\Form\Helpers\FieldsetsProvider\FieldsetsProvider;
 use Illuminate\Database\Eloquent\Model;
 
 class ValidateFieldsetsProvider extends FieldsetsProvider
