@@ -28,7 +28,6 @@ class Form
 	use CRUDExtraButtonsTrait;
 
 	public $extraViews;
-	public Collection $fetchers;
 	public ?string $id;
 
 	public bool $showTitle = true;
