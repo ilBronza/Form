@@ -52,6 +52,14 @@
 			{!! $form->renderExtraViews('outherTop') !!}
 
 			@if($form->isInFormDisplayMode())
+				@if($form->isCollapsible() && ! $form->hasCard())
+					<x-uikittemplate::collapse-toggle
+						:element="$form"
+						:aria-controls="$form->getId()"
+						class="uk-float-right uk-margin-small-bottom"
+					/>
+				@endif
+
 				@include('form::uikit._opening')
 			@endif
 
@@ -70,6 +78,14 @@
 								<div class="uk-card-header">
 
 									<div uk-grid>
+
+										@if($form->isCollapsible())
+											<x-uikittemplate::collapse-toggle
+												:element="$form"
+												:aria-controls="$form->getCollapseTargetId()"
+												class="uk-width-auto"
+											/>
+										@endif
 
 										@if($form->showTitle())
 											<div class="uk-h3 uk-display-block uk-width-expand">{!! $form->getTitle() !!}</div>
@@ -106,7 +122,10 @@
 
 								</div>
 
-								<div class="uk-card-body">
+								<div
+									@if($form->isCollapsible()) id="{{ $form->getCollapseTargetId() }}" @endif
+									class="uk-card-body @if($form->isCollapsible()) {{ $form->getCollapseTargetHtmlClassesString() }} @endif"
+								>
 
 									{!! $form->renderExtraViews('innerTop') !!}
 

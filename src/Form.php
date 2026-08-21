@@ -7,6 +7,7 @@ use IlBronza\CRUD\Traits\IlBronzaPackages\CRUDExtraButtonsTrait;
 use IlBronza\Form\FormFieldset;
 use IlBronza\Form\Traits\ExtraViewsTrait;
 use IlBronza\Form\Traits\FormButtonsTrait;
+use IlBronza\UikitTemplate\Traits\CollapsibleElementTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,7 @@ use function PHPUnit\Framework\isNull;
 
 class Form
 {
+	use CollapsibleElementTrait;
 	use CRUDDisplayHtmlClassesTrait;
 	public array $htmlClasses = [];
 
@@ -570,6 +572,16 @@ class Form
 	public function hasCollapse()
 	{
 		return $this->collapse;
+	}
+
+	protected function getDefaultCollapseStateKey() : string
+	{
+		$routeName = Route::currentRouteName() ?? 'unknown-route';
+		$model = $this->getModel();
+		$modelClass = $model ? Str::slug(get_class($model)) : 'no-model';
+		$modelKey = $model?->getKey() ?? 'new';
+
+		return "{$routeName}:{$modelClass}:{$modelKey}";
 	}
 
 	public function setAllDatabaseFields(array $allDatabaseFields)

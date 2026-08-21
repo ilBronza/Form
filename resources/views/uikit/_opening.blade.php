@@ -9,7 +9,7 @@
 	enctype="multipart/form-data" 
 	@endif
 
-	class="uk-form {{ $form->getHtmlClassesString() }}"
+	class="uk-form {{ $form->getHtmlClassesString() }} @if($form->isCollapsible() && ! $form->hasCard()) {{ $form->getCollapseTargetHtmlClassesString() }} @endif"
 >
 
 	@if(! in_array($method = $form->getMethod(), ['GET', 'POST']) )

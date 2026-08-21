@@ -12,6 +12,12 @@ class FieldsetParametersFile
 {
 	public $parameters;
 	public $modelManager;
+	public array $formParameters = [];
+
+	public function getFormParameters() : array
+	{
+		return $this->formParameters;
+	}
 
 	public function setModelManager(CrudModelManager $modelManager)
 	{

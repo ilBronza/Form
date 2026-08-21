@@ -116,6 +116,7 @@ La modalità **`displayMode`** controlla come ogni `FormField` viene disegnato i
 - **`setHorizontalForm()`** / **`setVerticalForm()`** / **`setStackedForm()`** — classi UIkit (`uk-form-horizontal` vs stacked).
 - **`setTitle()`**, **`setIntro()`**, **`setShowTitle()`**, **`setHideTitle()`**.
 - **`hasCard()`**, **`setCard()`**, **`addCardClasses()`** — card UIkit; classi create/edit possono essere influenzate da `config('form.createCardClasses')` / `editCardClasses` nel progetto che le applica.
+- **`setCollapsible()`**, **`setCollapsedInitially()`** — senza card aggiungono il toggle prima del tag `<form>` e collassano l'intero form; con card lo aggiungono nell'header, prima del titolo, e collassano solo il primo `uk-card-body`.
 - **`setCancelHref()`**, pulsanti submit / “save and …” tramite **`FormButtonsTrait`** (`setHasSubmitButton`, `addSaveAndNewButton`, `addClosureButton`, ecc.).
 - **`addExtraView($position, $view, $params)`**, **`addFetcher($position, $fetcher)`** — posizioni valide: `outherTop`, `outherBottom`, `innerTop`, `innerBottom`, `left`, `right`, `outherLeft`, `outherRight` (nomi storici con typo “outher”).
 
@@ -124,6 +125,39 @@ La modalità **`displayMode`** controlla come ogni `FormField` viene disegnato i
 - **`setDisplayMode('form'|'show'|'pdf')`**
 - **`setAllDatabaseFields()`** / **`getDatabaseField()`** — metadati opzionali per i campi.
 - **`hasUpdateEditor()`** — se il modello esiste e `config('form.updateEditor')` è true (salvo override con `setUpdateEditor()`), influisce su **`hasClosureButtons()`** (footer azioni).
+
+Il collapse globale può essere configurato anche in fase di creazione:
+
+```php
+$form = Form::createFromArray([
+    'collapsible' => true,
+    'collapsedInitially' => true,
+]);
+```
+
+Quando il form viene costruito tramite `CrudModelFormHelper`, le stesse chiavi possono essere configurate ad alto livello nel `FieldsetParametersFile` o nel controller. Il controller prevale sul parameters file.
+
+```php
+// Nel FieldsetParametersFile
+public array $formParameters = [
+    'collapsible' => true,
+    'collapsedInitially' => true,
+];
+```
+
+```php
+// Nel controller CRUD
+public array $formParameters = [
+    'collapsible' => true,
+    'collapsedInitially' => false,
+];
+```
+
+La preferenza scelta dall'utente viene mantenuta nella `sessionStorage` del browser. La chiave è generata automaticamente da route, classe del modello e id (oppure `new` in create). Solo in caso di due form equivalenti nella stessa pagina è utile l'override nel controller:
+
+```php
+public ?string $collapseStateKey = 'users-edit-secondary-form';
+```
 
 ---
 
