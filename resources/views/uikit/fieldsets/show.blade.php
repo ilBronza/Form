@@ -9,10 +9,10 @@
 				<legend class="uk-legend @if(! $description = $fieldset->getDescription()) uk-margin-medium-bottom @endif">
 					<span>{!! $fieldset->getLegend() !!}</span>
 					@if($fieldset->canBeHidden())
-					<span class="toggler toggle{{ $fieldset->getUniqueId() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif"
+					<span class="toggler toggle{{ $fieldset->getUniqueId() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif uk-icon-button"
 						  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 						  uk-icon="chevron-up"></span>
-					<span class="toggle{{ $fieldset->getUniqueId() }} @unless($fieldset->isCollapsedInitially()) uk-hidden @endunless"
+					<span class="toggle{{ $fieldset->getUniqueId() }} @unless($fieldset->isCollapsedInitially()) uk-hidden @endunless uk-icon-button"
 						  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 						  uk-icon="chevron-down"></span>
 					@endif
