@@ -11,9 +11,17 @@
 
 						@if($fieldset->canBeHidden())
 						<span class="toggler toggle{{ $fieldset->getUniqueId() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif uk-icon-button"
+							  data-fieldset-collapse-toggle
+							  data-fieldset-collapse-target-id="fieldset{{ $fieldset->getUniqueId() }}-collapse-target"
+							  data-collapse-state-key="{{ $fieldset->getCollapseStateKey() }}"
+							  data-fieldset-collapse-expanded-icon
 							  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 							  uk-icon="chevron-up"></span>
 						<span class="toggle{{ $fieldset->getUniqueId() }} @unless($fieldset->isCollapsedInitially()) uk-hidden @endunless uk-icon-button"
+							  data-fieldset-collapse-toggle
+							  data-fieldset-collapse-target-id="fieldset{{ $fieldset->getUniqueId() }}-collapse-target"
+							  data-collapse-state-key="{{ $fieldset->getCollapseStateKey() }}"
+							  data-fieldset-collapse-collapsed-icon
 							  uk-toggle="target: .toggle{{ $fieldset->getUniqueId() }}; cls: uk-hidden"
 							  uk-icon="chevron-down"></span>
 						@endif
@@ -23,7 +31,10 @@
 					</legend>
 				@endif
 
-				<div class="toggle toggle{{ $fieldset->getUniqueId() }} {{ $fieldset->getBodyHtmlClassesString() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif">
+				<div id="fieldset{{ $fieldset->getUniqueId() }}-collapse-target" class="toggle toggle{{ $fieldset->getUniqueId() }} {{ $fieldset->getBodyHtmlClassesString() }} @if($fieldset->isCollapsedInitially()) uk-hidden @endif">
+					@if($fieldset->canBeHidden() && $fieldset->showLegend())
+						@include('form::uikit.fieldsets._collapse-state')
+					@endif
 
 					@if($description ?? false)
 						<div class="uk-margin-medium-bottom">

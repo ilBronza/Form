@@ -7,6 +7,7 @@ use IlBronza\Buttons\Button;
 use IlBronza\FormField\FormField;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -108,6 +109,23 @@ class FormFieldset
 			return $this->collapsedInitially;
 
 		return (bool) config('form.fieldset_collapsed_by_default', false);
+	}
+
+	/**
+	 * Browser-session key for the fieldset visibility preference.
+	 *
+	 * The HTML id is intentionally random to keep multiple rendered forms apart,
+	 * so it must not be used to persist the user preference.
+	 */
+	public function getCollapseStateKey() : string
+	{
+		$route = request()->route();
+		$routeName = is_object($route) && method_exists($route, 'getName')
+			? $route->getName()
+			: null;
+		$routeName ??= Route::currentRouteName() ?? 'unknown-route';
+
+		return "ilbronza:fieldset-collapse:{$routeName}:{$this->name}";
 	}
 
 	public function setWidth($width)
